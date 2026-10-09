@@ -43,4 +43,21 @@ describe("csvExport", () => {
     expect(csv).not.toContain("super_secret_token_123");
     expect(csv).toContain("REDACTED");
   });
+
+  it("should neutralize formula injection attacks in CSV cells", () => {
+    const item: HistoryItem = {
+      id: "item_injection",
+      category: "http",
+      target: "https://example.com",
+      startTime: 1600000000000,
+      endTime: 1600000000050,
+      durationMs: 50,
+      status: "success",
+      summary: "=cmd|' /C calc'!A0",
+      details: {},
+    };
+
+    const csv = generateHistoryCsv([item]);
+    expect(csv).toContain("\"'=cmd|' /C calc'!A0\"");
+  });
 });

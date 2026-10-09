@@ -1,3 +1,4 @@
+@import "leaflet/dist/leaflet.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -60,4 +61,36 @@ body {
 .noc-grid-bg {
   background-image: radial-gradient(rgba(77, 224, 193, 0.04) 1px, transparent 1px);
   background-size: 24px 24px;
+}
+
+/* Leaflet Dark NOC Map Overrides */
+.leaflet-container {
+  background-color: #080D18 !important;
+  font-family: inherit;
+}
+
+.leaflet-tile {
+  filter: brightness(0.7) invert(0.9) contrast(1.2) hue-rotate(185deg) saturate(0.4) !important;
+}
+
+.leaflet-control-zoom a {
+  background-color: #101A2B !important;
+  color: #94A3B8 !important;
+  border-color: #1E2D44 !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background-color: #16243A !important;
+  color: #4DE0C1 !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(11, 18, 32, 0.85) !important;
+  color: #64748B !important;
+  font-size: 10px !important;
+  backdrop-filter: blur(4px);
+}
+
+.leaflet-control-attribution a {
+  color: #4DE0C1 !important;
 }

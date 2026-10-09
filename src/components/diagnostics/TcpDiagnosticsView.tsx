@@ -9,6 +9,7 @@ import { saveHistoryItem } from "@/lib/storage/historyStore";
 import { TcpCheckResult } from "@/types/diagnostics";
 import { formatDuration } from "@/lib/utils/formatters";
 import { Network, ShieldAlert, RefreshCw } from "lucide-react";
+import { MultiPortScannerCard } from "./MultiPortScannerCard";
 
 const COMMON_PORTS = [
   { port: 80, name: "HTTP" },
@@ -190,6 +191,9 @@ export function TcpDiagnosticsView() {
           </CardContent>
         </Card>
       )}
+
+      {/* Concurrent 10-Port Matrix Scanner */}
+      <MultiPortScannerCard targetHost={hostInput} />
     </div>
   );
 }

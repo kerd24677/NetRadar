@@ -10,6 +10,8 @@ import {
   History,
   Settings,
   ShieldCheck,
+  TrendingUp,
+  MapPin,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
@@ -25,6 +27,18 @@ export const NAV_ITEMS = [
     href: "/diagnostics",
     icon: Activity,
     description: "HTTP, DNS, Speed & TCP probes",
+  },
+  {
+    name: "Stability",
+    href: "/stability",
+    icon: TrendingUp,
+    description: "Jitter, percentiles & outages",
+  },
+  {
+    name: "Field Map",
+    href: "/map",
+    icon: MapPin,
+    description: "Wi-Fi RF survey & cell towers",
   },
   {
     name: "Network Info",

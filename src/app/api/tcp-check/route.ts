@@ -6,27 +6,85 @@ import { isPrivateIpOrLocalhost } from "@/lib/validation/urlValidation";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+interface SinglePortResult {
+  port: number;
+  status: "open" | "closed" | "timeout" | "forbidden";
+  durationMs: number;
+  message: string;
+}
+
+async function testSinglePort(
+  resolvedIp: string,
+  port: number,
+  timeoutMs: number = 3000
+): Promise<SinglePortResult> {
+  const startTime = process.hrtime.bigint();
+
+  return new Promise<SinglePortResult>((resolve) => {
+    const socket = new net.Socket();
+    let isSettled = false;
+
+    socket.setTimeout(timeoutMs);
+
+    socket.on("connect", () => {
+      if (isSettled) return;
+      isSettled = true;
+      const endTime = process.hrtime.bigint();
+      const durationMs = Number(endTime - startTime) / 1_000_000;
+      socket.destroy();
+      resolve({
+        port,
+        status: "open",
+        durationMs: Math.round(durationMs * 100) / 100,
+        message: `TCP Handshake completed in ${Math.round(durationMs * 100) / 100}ms to ${resolvedIp}:${port}`,
+      });
+    });
+
+    socket.on("timeout", () => {
+      if (isSettled) return;
+      isSettled = true;
+      const endTime = process.hrtime.bigint();
+      const durationMs = Number(endTime - startTime) / 1_000_000;
+      socket.destroy();
+      resolve({
+        port,
+        status: "timeout",
+        durationMs: Math.round(durationMs * 100) / 100,
+        message: `Connection timed out after ${timeoutMs}ms (SYN filtered or packet dropped).`,
+      });
+    });
+
+    socket.on("error", (err: NodeJS.ErrnoException) => {
+      if (isSettled) return;
+      isSettled = true;
+      const endTime = process.hrtime.bigint();
+      const durationMs = Number(endTime - startTime) / 1_000_000;
+      socket.destroy();
+      const code = err.code || "ECONNREFUSED";
+      resolve({
+        port,
+        status: "closed",
+        durationMs: Math.round(durationMs * 100) / 100,
+        message: `Connection rejected (${code}): Port closed or reset by host.`,
+      });
+    });
+
+    socket.connect(port, resolvedIp);
+  });
+}
+
 /**
  * Controlled server-side TCP handshake probe with strict SSRF protections.
- * Browser JavaScript cannot open raw TCP sockets; this endpoint provides genuine
- * TCP SYN/ACK handshake measurements via the backend Node.js environment.
+ * Supports single port or multi-port array check.
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const rawHost = String(body.host || "").trim();
-    const port = parseInt(String(body.port || ""), 10);
 
     if (!rawHost) {
       return NextResponse.json(
         { error: "Hostname or IP address is required." },
-        { status: 400 }
-      );
-    }
-
-    if (isNaN(port) || port < 1 || port > 65535) {
-      return NextResponse.json(
-        { error: "Port must be an integer between 1 and 65535." },
         { status: 400 }
       );
     }
@@ -37,7 +95,6 @@ export async function POST(request: NextRequest) {
         {
           status: "forbidden",
           host: rawHost,
-          port,
           durationMs: 0,
           message: "SSRF Protection: Probes to localhost and private RFC-1918 subnets are prohibited.",
           isServerlessLimited: true,
@@ -57,7 +114,6 @@ export async function POST(request: NextRequest) {
           {
             status: "forbidden",
             host: rawHost,
-            port,
             durationMs: 0,
             message: `SSRF Protection: Domain resolves to protected address (${resolvedIp}). Request blocked.`,
             isServerlessLimited: true,
@@ -70,7 +126,6 @@ export async function POST(request: NextRequest) {
         {
           status: "closed",
           host: rawHost,
-          port,
           durationMs: 0,
           message: `DNS Resolution failed: Unable to resolve '${rawHost}' to an IP address.`,
           isServerlessLimited: false,
@@ -79,71 +134,44 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Execute genuine TCP socket connection with 3500ms timeout
-    const startTime = process.hrtime.bigint();
-    const timeoutMs = 3500;
+    // Check if multi-port array was requested
+    if (Array.isArray(body.ports) && body.ports.length > 0) {
+      // Limit to max 12 ports for safe resource usage
+      const targetPorts: number[] = body.ports
+        .map((p: unknown) => parseInt(String(p), 10))
+        .filter((p: number) => !isNaN(p) && p >= 1 && p <= 65535)
+        .slice(0, 12);
 
-    const result = await new Promise<{
-      status: "open" | "closed" | "timeout";
-      durationMs: number;
-      message: string;
-    }>((resolve) => {
-      const socket = new net.Socket();
-      let isSettled = false;
+      const scanResults = await Promise.all(
+        targetPorts.map((p) => testSinglePort(resolvedIp, p, 2500))
+      );
 
-      socket.setTimeout(timeoutMs);
-
-      socket.on("connect", () => {
-        if (isSettled) return;
-        isSettled = true;
-        const endTime = process.hrtime.bigint();
-        const durationMs = Number(endTime - startTime) / 1_000_000;
-        socket.destroy();
-        resolve({
-          status: "open",
-          durationMs: Math.round(durationMs * 100) / 100,
-          message: `TCP Handshake completed successfully in ${Math.round(durationMs * 100) / 100}ms to ${resolvedIp}:${port}`,
-        });
+      return NextResponse.json({
+        host: rawHost,
+        resolvedIp,
+        multiPort: true,
+        results: scanResults,
       });
+    }
 
-      socket.on("timeout", () => {
-        if (isSettled) return;
-        isSettled = true;
-        const endTime = process.hrtime.bigint();
-        const durationMs = Number(endTime - startTime) / 1_000_000;
-        socket.destroy();
-        resolve({
-          status: "timeout",
-          durationMs: Math.round(durationMs * 100) / 100,
-          message: `TCP Connection timed out after ${timeoutMs}ms (SYN packet dropped or firewall filtered).`,
-        });
-      });
+    // Single port mode
+    const port = parseInt(String(body.port || ""), 10);
+    if (isNaN(port) || port < 1 || port > 65535) {
+      return NextResponse.json(
+        { error: "Port must be an integer between 1 and 65535." },
+        { status: 400 }
+      );
+    }
 
-      socket.on("error", (err: NodeJS.ErrnoException) => {
-        if (isSettled) return;
-        isSettled = true;
-        const endTime = process.hrtime.bigint();
-        const durationMs = Number(endTime - startTime) / 1_000_000;
-        socket.destroy();
-
-        const code = err.code || "ECONNREFUSED";
-        resolve({
-          status: "closed",
-          durationMs: Math.round(durationMs * 100) / 100,
-          message: `Connection refused / error (${code}): Remote host actively rejected the TCP connection.`,
-        });
-      });
-
-      socket.connect(port, resolvedIp);
-    });
+    const singleResult = await testSinglePort(resolvedIp, port, 3500);
 
     return NextResponse.json({
-      status: result.status,
+      status: singleResult.status,
       host: rawHost,
       port,
       resolvedIp,
-      durationMs: result.durationMs,
-      message: result.message,
+      durationMs: singleResult.durationMs,
+      message: singleResult.message,
       isServerlessLimited: false,
     });
   } catch (err: unknown) {

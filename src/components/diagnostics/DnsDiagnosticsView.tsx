@@ -7,9 +7,10 @@ import { Badge } from "@/components/ui/Badge";
 import { queryDnsOverHttps } from "@/lib/diagnostics/dnsOverHttps";
 import { saveHistoryItem } from "@/lib/storage/historyStore";
 import { DnsQueryResult, DnsRecordType } from "@/types/dns";
-import { DOH_RESOLVERS } from "@/types/settings";
 import { formatDuration } from "@/lib/utils/formatters";
+import { DOH_RESOLVERS } from "@/types/settings";
 import { Server, RefreshCw, AlertTriangle, Database } from "lucide-react";
+import { MultiDnsMatrixCard } from "./MultiDnsMatrixCard";
 
 const RECORD_TYPES: DnsRecordType[] = [
   "A",
@@ -249,6 +250,9 @@ export function DnsDiagnosticsView() {
           </CardContent>
         </Card>
       )}
+
+      {/* Side-by-side Multi-Resolver Benchmark */}
+      <MultiDnsMatrixCard initialDomain={domainInput} />
     </div>
   );
 }

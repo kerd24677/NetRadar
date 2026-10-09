@@ -1,18 +1,23 @@
 import { HistoryItem } from "@/types/history";
 
 /**
- * Escapes fields for standard RFC 4180 CSV output.
+ * Escapes fields for standard RFC 4180 CSV output with spreadsheet formula injection protection.
  */
-function escapeCsvCell(value: unknown): string {
+export function escapeCsvCell(value: unknown): string {
   if (value === null || value === undefined) return '""';
-  const str = String(value).replace(/"/g, '""');
-  return `"${str}"`;
+  let str = String(value);
+  // Neutralize spreadsheet formula execution (=, +, -, @, \t, \r)
+  if (/^[=+\-@\t\r]/.test(str)) {
+    str = `'${str}`;
+  }
+  const escaped = str.replace(/"/g, '""');
+  return `"${escaped}"`;
 }
 
 /**
  * Strips potentially sensitive query parameters (tokens, keys, passwords) from URLs for safe export.
  */
-function sanitizeTargetForExport(target: string): string {
+export function sanitizeTargetForExport(target: string): string {
   try {
     if (target.startsWith("http://") || target.startsWith("https://")) {
       const url = new URL(target);
@@ -61,8 +66,12 @@ export function generateHistoryCsv(items: HistoryItem[]): string {
   return [headers.join(","), ...rows].join("\r\n");
 }
 
-export function downloadCsvFile(filename: string, csvContent: string): void {
+export function downloadCsvFile(arg1: string, arg2: string): void {
   if (typeof window === "undefined") return;
+
+  const isArg1File = arg1.endsWith(".csv");
+  const filename = isArg1File ? arg1 : arg2;
+  const csvContent = isArg1File ? arg2 : arg1;
 
   const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
