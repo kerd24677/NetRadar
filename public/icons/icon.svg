@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#142642" />
+      <stop offset="100%" stop-color="#0B1220" />
+    </radialGradient>
+    <linearGradient id="tealGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6FFFD9" />
+      <stop offset="100%" stop-color="#32B89D" />
+    </linearGradient>
+    <radialGradient id="radarSweep" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#4DE0C1" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#4DE0C1" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="108" fill="url(#bgGlow)" />
+  <rect width="510" height="510" x="1" y="1" rx="107" fill="none" stroke="#243654" stroke-width="4" />
+
+  <!-- Concentric Radar Rings -->
+  <circle cx="256" cy="256" r="180" fill="none" stroke="#243654" stroke-width="3" stroke-dasharray="6 6" />
+  <circle cx="256" cy="256" r="130" fill="none" stroke="#243654" stroke-width="3" />
+  <circle cx="256" cy="256" r="75" fill="none" stroke="#32527b" stroke-width="3" />
+  <circle cx="256" cy="256" r="24" fill="#142642" stroke="#4DE0C1" stroke-width="3" />
+
+  <!-- Crosshairs -->
+  <line x1="256" y1="60" x2="256" y2="452" stroke="#243654" stroke-width="2.5" />
+  <line x1="60" y1="256" x2="452" y2="256" stroke="#243654" stroke-width="2.5" />
+
+  <!-- Sweep sector -->
+  <path d="M 256 256 L 256 76 A 180 180 0 0 1 383 129 Z" fill="url(#radarSweep)" />
+
+  <!-- Radar Blips / Targets -->
+  <circle cx="340" cy="180" r="8" fill="#4DE0C1" filter="drop-shadow(0 0 8px #4DE0C1)" />
+  <circle cx="180" cy="320" r="6" fill="#38BDF8" />
+  <circle cx="310" cy="310" r="5" fill="#F59E0B" />
+
+  <!-- Center pulse -->
+  <circle cx="256" cy="256" r="8" fill="#4DE0C1" />
+</svg>
