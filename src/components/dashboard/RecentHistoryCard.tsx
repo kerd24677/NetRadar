@@ -18,19 +18,19 @@ export function RecentHistoryCard({ items }: RecentHistoryCardProps) {
       <CardHeader>
         <CardTitle>
           <History className="w-4 h-4 text-radar-teal" />
-          Recent Diagnostic Telemetry
+          Son Tanılama Telemetrisi
         </CardTitle>
         <Link
           href="/history"
           className="text-xs text-radar-teal hover:underline flex items-center gap-1 font-mono"
         >
-          View All <ArrowRight className="w-3 h-3" />
+          Tümünü Gör <ArrowRight className="w-3 h-3" />
         </Link>
       </CardHeader>
       <CardContent>
         {items.length === 0 ? (
           <div className="text-center py-8 text-xs text-radar-muted">
-            No local diagnostic runs logged yet. Execute a test to record telemetry.
+            Henüz yerel tanılama kaydı bulunmuyor. Telemetri kaydetmek için bir test çalıştırın.
           </div>
         ) : (
           <div className="divide-y divide-radar-border">

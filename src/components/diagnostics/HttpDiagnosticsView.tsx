@@ -38,12 +38,12 @@ export function HttpDiagnosticsView() {
         endTime: Date.now(),
         durationMs: res.durationMs,
         status: res.status === "success" ? "success" : res.status === "opaque" ? "warning" : "error",
-        summary: `HTTP latency ${formatDuration(res.durationMs)} (${res.statusText || res.status})`,
+        summary: `HTTP gecikmesi ${formatDuration(res.durationMs)} (${res.statusText || res.status})`,
         details: { http: res },
         errorMessage: res.errorMessage,
       });
     } catch (err) {
-      console.error("HTTP test error:", err);
+      console.error("HTTP test hatası:", err);
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +56,7 @@ export function HttpDiagnosticsView() {
         <CardHeader>
           <div className="flex items-center gap-2">
             <Globe className="w-4 h-4 text-radar-teal" />
-            <CardTitle>HTTP / HTTPS Response Latency & Availability</CardTitle>
+            <CardTitle>HTTP / HTTPS Yanıt Gecikmesi & Erişilebilirlik</CardTitle>
           </div>
           <div className="flex items-center gap-1.5 bg-radar-bg p-1 rounded-lg border border-radar-border">
             <button
@@ -67,7 +67,7 @@ export function HttpDiagnosticsView() {
                   : "text-radar-muted hover:text-slate-200"
               }`}
             >
-              Single Probe
+              Tekil Sonda
             </button>
             <button
               onClick={() => setSubMode("continuous")}
@@ -77,7 +77,7 @@ export function HttpDiagnosticsView() {
                   : "text-radar-muted hover:text-slate-200"
               }`}
             >
-              Continuous Stream
+              Sürekli Akış
             </button>
             <button
               onClick={() => setSubMode("headers")}
@@ -87,7 +87,7 @@ export function HttpDiagnosticsView() {
                   : "text-radar-muted hover:text-slate-200"
               }`}
             >
-              Security Headers
+              Güvenlik Başlıkları
             </button>
           </div>
         </CardHeader>
@@ -99,7 +99,7 @@ export function HttpDiagnosticsView() {
                 type="text"
                 value={urlInput}
                 onChange={(e) => setUrlInput(e.target.value)}
-                placeholder="https://example.com or hostname"
+                placeholder="https://ornek.com veya alan adı"
                 className="w-full bg-radar-bg border border-radar-border rounded-lg pl-3 pr-20 py-2.5 text-sm font-mono text-slate-100 placeholder:text-radar-subtle focus:outline-none focus:ring-1 focus:ring-radar-teal"
               />
               <div className="absolute right-2 top-1/2 -translate-y-1/2">
@@ -108,9 +108,9 @@ export function HttpDiagnosticsView() {
                   onChange={(e) => setTimeoutMs(Number(e.target.value))}
                   className="bg-radar-surface text-xs font-mono text-radar-muted rounded px-1.5 py-1 border border-radar-border focus:outline-none"
                 >
-                  <option value={2000}>2s</option>
-                  <option value={5000}>5s</option>
-                  <option value={10000}>10s</option>
+                  <option value={2000}>2 sn</option>
+                  <option value={5000}>5 sn</option>
+                  <option value={10000}>10 sn</option>
                 </select>
               </div>
             </div>
@@ -122,13 +122,13 @@ export function HttpDiagnosticsView() {
               leftIcon={<RefreshCw className="w-4 h-4" />}
               className="shrink-0 font-mono tracking-wide"
             >
-              Execute Probe
+              Sondayı Çalıştır
             </Button>
           </div>
 
           {/* Preset Buttons */}
           <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
-            <span className="text-radar-subtle font-mono">Quick Targets:</span>
+            <span className="text-radar-subtle font-mono">Hızlı Hedefler:</span>
             {[
               "https://1.1.1.1",
               "https://cloudflare.com",
@@ -154,8 +154,7 @@ export function HttpDiagnosticsView() {
           <div className="p-3 rounded-lg bg-radar-elevated/40 border border-radar-border text-xs text-radar-muted flex items-start gap-2.5">
             <Zap className="w-4 h-4 text-radar-teal shrink-0 mt-0.5" />
             <p>
-              Measures genuine application-layer HTTP/HTTPS round-trip timing with microsecond precision via{" "}
-              <code className="text-radar-teal font-mono">performance.now()</code>. Reflects client TCP negotiation, TLS handshake, and first-byte response. Browser security sandboxes prevent raw ICMP echo requests.
+              <code className="text-radar-teal font-mono">performance.now()</code> üzerinden mikrosaniye hassasiyetiyle gerçek uygulama katmanı HTTP/HTTPS gidiş-dönüş süresini ölçer. İstemci TCP el sıkışmasını, TLS anlaşmasını ve ilk bayt yanıtını yansıtır. Tarayıcı güvenlik kum havuzu doğrudan ham ICMP isteklerine izin vermez.
             </p>
           </div>
         </CardContent>
@@ -167,7 +166,7 @@ export function HttpDiagnosticsView() {
           <CardHeader>
             <CardTitle>
               <Clock className="w-4 h-4 text-radar-teal" />
-              Measurement Report for <span className="font-mono text-white">{result.normalizedUrl}</span>
+              Ölçüm Raporu: <span className="font-mono text-white">{result.normalizedUrl}</span>
             </CardTitle>
             <Badge
               variant={
@@ -178,13 +177,17 @@ export function HttpDiagnosticsView() {
                   : "rose"
               }
             >
-              {result.status.toUpperCase()}
+              {result.status === "success"
+                ? "BAŞARILI"
+                : result.status === "opaque"
+                ? "OPAQUE (KAPALI)"
+                : "HATA"}
             </Badge>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
-                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Round-Trip Duration</span>
+                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Gidiş-Dönüş Süresi</span>
                 <span className="text-xl font-bold font-mono text-radar-teal mt-0.5 block">
                   {formatDuration(result.durationMs)}
                 </span>
@@ -192,33 +195,33 @@ export function HttpDiagnosticsView() {
               </div>
 
               <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
-                <span className="text-[11px] font-mono text-radar-subtle uppercase block">HTTP Status</span>
+                <span className="text-[11px] font-mono text-radar-subtle uppercase block">HTTP Durumu</span>
                 <span className="text-lg font-bold font-mono text-white mt-0.5 block">
                   {result.httpStatus !== undefined && result.httpStatus > 0
                     ? result.httpStatus
                     : result.isOpaqueResponse
                     ? "0 (Opaque)"
-                    : "N/A"}
+                    : "Yok"}
                 </span>
                 <span className="text-[10px] text-radar-muted truncate block">
-                  {result.statusText || "Response code"}
+                  {result.statusText || "Yanıt Kodu"}
                 </span>
               </div>
 
               <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
-                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Protocol</span>
+                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Protokol</span>
                 <span className="text-lg font-bold font-mono text-white mt-0.5 block uppercase">
                   {result.protocol ? result.protocol.replace(":", "") : "HTTPS"}
                 </span>
-                <span className="text-[10px] text-radar-muted">Scheme</span>
+                <span className="text-[10px] text-radar-muted">Şema</span>
               </div>
 
               <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
-                <span className="text-[11px] font-mono text-radar-subtle uppercase block">CORS Isolation</span>
+                <span className="text-[11px] font-mono text-radar-subtle uppercase block">CORS Yalıtımı</span>
                 <span className="text-base font-bold font-mono text-white mt-0.5 block">
-                  {result.isOpaqueResponse ? "Opaque" : "Standard"}
+                  {result.isOpaqueResponse ? "Opaque (Yalıtılmış)" : "Standart"}
                 </span>
-                <span className="text-[10px] text-radar-muted">Browser Policy</span>
+                <span className="text-[10px] text-radar-muted">Tarayıcı Kuralı</span>
               </div>
             </div>
 
@@ -226,7 +229,7 @@ export function HttpDiagnosticsView() {
               <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300 flex items-start gap-2.5">
                 <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
                 <p>
-                  <strong>Cross-Origin Resource Sharing (CORS) Notice:</strong> Remote host replied successfully, but cross-origin read headers were not attached. Browser isolates header visibility, but round-trip network timing of {formatDuration(result.durationMs)} is verified and accurate.
+                  <strong>Kökenler Arası Kaynak Paylaşımı (CORS) Bildirimi:</strong> Uzak ana bilgisayar başarıyla yanıt verdi ancak tarayıcıya kökenler arası başlık okuma izni verilmedi. Tarayıcı başlık içeriğini yalıtır ancak {formatDuration(result.durationMs)} gidiş-dönüş ağ süresi tamamen gerçek ve doğrulanmıştır.
                 </p>
               </div>
             )}
@@ -235,7 +238,7 @@ export function HttpDiagnosticsView() {
               <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-xs text-rose-300 flex items-start gap-2.5">
                 <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
                 <p>
-                  <strong>Diagnostic Detail:</strong> {result.errorMessage}
+                  <strong>Tanılama Detayı:</strong> {result.errorMessage}
                 </p>
               </div>
             )}

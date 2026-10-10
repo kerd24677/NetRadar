@@ -25,16 +25,16 @@ export function TowerLayerCard({
   }, [userCoords, towers]);
 
   return (
-    <div className="bg-radar-surface/90 border border-radar-border rounded-xl p-4 sm:p-5 shadow-lg space-y-3.5">
+    <div className="bg-radar-surface/90 border border-radar-border rounded-xl p-4 sm:p-5 shadow-noc-card space-y-3.5">
       {/* Header & Toggle */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h3 className="text-sm font-semibold text-slate-100 flex items-center gap-2">
-            <Radio className="w-4 h-4 text-amber-400" />
-            Public Cellular Infrastructure Layer
+            <Radio className="w-4 h-4 text-radar-purple" />
+            Kamuya Açık Hücresel Altyapı Katmanı
           </h3>
           <p className="text-xs text-radar-subtle mt-0.5">
-            Geographic proximity to public cell towers (OpenCelliD dataset)
+            Kamuya açık baz istasyonu kulelerine coğrafi yakınlık analizi (OpenCelliD veri seti)
           </p>
         </div>
 
@@ -44,30 +44,30 @@ export function TowerLayerCard({
           variant="outline"
           className={`text-xs px-3 py-1.5 flex items-center gap-1.5 font-mono ${
             showTowers
-              ? "border-amber-400/50 bg-amber-400/10 text-amber-300"
+              ? "border-purple-400/50 bg-purple-400/10 text-purple-300"
               : "border-radar-border text-slate-400 hover:text-slate-200"
           }`}
         >
           {showTowers ? (
             <>
               <Eye className="w-3.5 h-3.5" />
-              Tower Layer Active
+              Kule Katmanı Aktif
             </>
           ) : (
             <>
               <EyeOff className="w-3.5 h-3.5" />
-              Show Towers on Map
+              Kuleleri Haritada Göster
             </>
           )}
         </Button>
       </div>
 
       {/* Honest Boundary Notice */}
-      <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs font-mono text-amber-200/90 flex items-start gap-2.5">
-        <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+      <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 text-xs font-mono text-purple-200/90 flex items-start gap-2.5">
+        <ShieldAlert className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
         <div>
-          <span className="font-semibold text-amber-300">NOC Integrity Notice: </span>
-          Web browsers cannot read mobile baseband hardware, serving cell IDs, or RSRP signal strength. The towers listed below represent the <strong>nearest mapped public base stations</strong> via straight-line Haversine calculation, not your verified serving cell.
+          <span className="font-semibold text-purple-300">NOC Dürüstlük Bildirimi: </span>
+          Web tarayıcıları mobil modem donanımına, bağlı olunan hücre kimliğine (Cell ID) veya RSRP sinyal gücüne erişemez. Aşağıdaki baz istasyonları düz hat Haversine hesaplamasıyla <strong>en yakın kamu referans kulelerini</strong> gösterir; cihazınızın doğrudan bu kuleye bağlı olduğunu garanti etmez.
         </div>
       </div>
 
@@ -75,14 +75,14 @@ export function TowerLayerCard({
       {nearestTowers.length > 0 ? (
         <div className="space-y-2">
           <div className="flex items-center justify-between text-[11px] font-mono text-radar-subtle uppercase">
-            <span>Nearest Mapped Reference Towers:</span>
-            <span className="text-[10px] text-amber-400">Sample Reference Nodes (Istanbul)</span>
+            <span>En Yakın Referans Baz İstasyonları:</span>
+            <span className="text-[10px] text-purple-400">Örnek Referans Noktaları (İstanbul)</span>
           </div>
 
           {nearestTowers[0].distanceKm > 100 && (
             <div className="p-2.5 rounded bg-radar-bg border border-radar-border text-[11px] text-slate-400 font-mono">
-              <span className="text-amber-300 font-semibold">Regional Notice: </span>
-              Your current GPS location is ~{nearestTowers[0].distanceKm} km from the included reference base stations. The offline demo dataset includes Istanbul OpenCelliD nodes. Global lookups require configuring a regional OpenCelliD database dump.
+              <span className="text-amber-300 font-semibold">Bölgesel Bildirim: </span>
+              Mevcut GPS konumunuz referans istasyonlardan ~{nearestTowers[0].distanceKm} km uzaklıktadır. Çevrimdışı demo veri seti İstanbul OpenCelliD düğümlerini içerir.
             </div>
           )}
 
@@ -94,38 +94,33 @@ export function TowerLayerCard({
               >
                 <div>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-bold text-amber-400 flex items-center gap-1">
+                    <span className="font-bold text-purple-400 flex items-center gap-1">
                       <Radio className="w-3 h-3" />
-                      {tower.radio || "LTE"} Tower #{idx + 1}
+                      {tower.radio || "LTE"} Kule #{idx + 1}
                     </span>
-                    <span className="text-[10px] text-slate-400">
-                      ID: {tower.cellId || tower.id.substring(0, 6)}
-                    </span>
+                    <span className="text-[10px] text-radar-subtle">{tower.source}</span>
                   </div>
-                  <div className="text-slate-300 font-semibold text-sm">
-                    ~{distanceKm} km
-                    <span className="text-xs text-radar-subtle font-normal ml-1">
-                      ({distanceMeters}m)
-                    </span>
+                  <div className="text-slate-300 text-[11px]">
+                    Operatör: <span className="font-semibold">{tower.operator || "Kamu Altyapısı"}</span>
                   </div>
-                  <div className="text-[11px] text-radar-subtle mt-0.5">
-                    {tower.operator || "Public Infrastructure"}
+                  <div className="text-radar-subtle text-[10px]">
+                    Hücre ID: {tower.cellId || tower.id}
                   </div>
                 </div>
 
-                <div className="text-[10px] text-slate-500 mt-2 pt-1 border-t border-radar-border/60 flex items-center justify-between">
-                  <span>MCC: {tower.mcc || 286} MNC: {tower.mnc || "01"}</span>
-                  <span>{tower.source}</span>
+                <div className="mt-2.5 pt-2 border-t border-radar-border flex items-center justify-between">
+                  <span className="text-[10px] text-radar-subtle">Kuş Uçuşu:</span>
+                  <span className="font-bold text-radar-cyan">
+                    {distanceKm < 1 ? `${distanceMeters} m` : `${distanceKm} km`}
+                  </span>
                 </div>
               </div>
             ))}
           </div>
         </div>
       ) : (
-        <div className="py-4 text-center text-xs font-mono text-radar-subtle bg-radar-bg/40 border border-dashed border-radar-border rounded-lg">
-          {userCoords
-            ? "No public towers found in the local radius."
-            : "Acquire GPS location to calculate straight-line proximity to nearest public cellular towers."}
+        <div className="p-3 bg-radar-bg rounded-lg border border-radar-border text-xs font-mono text-radar-subtle text-center">
+          En yakın baz istasyonu mesafesini hesaplamak için lütfen GPS takibini etkinleştirin veya haritadan bir nokta seçin.
         </div>
       )}
     </div>

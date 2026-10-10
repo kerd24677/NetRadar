@@ -38,14 +38,14 @@ export function PointDetailBottomSheet({
         });
       }
     } catch (err) {
-      console.warn("Re-test latency failed:", err);
+      console.warn("Gecikme testi başarısız oldu:", err);
     } finally {
       setIsTestingLatency(false);
     }
   };
 
   return (
-    <Modal isOpen={!!point} onClose={onClose} title={`Survey Point: ${point.label}`}>
+    <Modal isOpen={!!point} onClose={onClose} title={`Saha Noktası: ${point.label}`}>
       <div className="space-y-4 text-xs font-mono">
         {/* Signal Strength & Quality Banner */}
         <div className="bg-radar-bg p-3.5 rounded-lg border border-radar-border flex items-center justify-between">
@@ -62,10 +62,10 @@ export function PointDetailBottomSheet({
             </div>
             <div>
               <div className="text-slate-200 font-bold text-sm">
-                {point.rssi !== undefined ? `${point.rssi} dBm` : "No RSSI Recorded"}
+                {point.rssi !== undefined ? `${point.rssi} dBm` : "Sinyal Kaydedilmedi"}
               </div>
               <div className="text-[11px]" style={{ color: rating.color }}>
-                {rating.label} Quality
+                {rating.label} Kapsama Seviyesi
               </div>
             </div>
           </div>
@@ -89,15 +89,15 @@ export function PointDetailBottomSheet({
           <div className="bg-radar-bg p-2.5 rounded-lg border border-radar-border">
             <span className="text-radar-subtle text-[10px] block mb-0.5">SSID</span>
             <span className="text-slate-200 font-semibold truncate block">
-              {point.ssid || "Unspecified"}
+              {point.ssid || "Belirtilmemiş"}
             </span>
           </div>
 
           <div className="bg-radar-bg p-2.5 rounded-lg border border-radar-border">
-            <span className="text-radar-subtle text-[10px] block mb-0.5">BAND / CHANNEL</span>
+            <span className="text-radar-subtle text-[10px] block mb-0.5">BANT / KANAL</span>
             <span className="text-slate-200 font-semibold block">
-              {point.band || "Unknown"}{" "}
-              {point.channel !== undefined ? `(Ch ${point.channel})` : ""}
+              {point.band || "Bilinmiyor"}{" "}
+              {point.channel !== undefined ? `(Kanal ${point.channel})` : ""}
             </span>
           </div>
 
@@ -109,9 +109,9 @@ export function PointDetailBottomSheet({
           </div>
 
           <div className="bg-radar-bg p-2.5 rounded-lg border border-radar-border">
-            <span className="text-radar-subtle text-[10px] block mb-0.5">MEASUREMENT SOURCE</span>
+            <span className="text-radar-subtle text-[10px] block mb-0.5">ÖLÇÜM KAYNAĞI</span>
             <span className="text-radar-teal uppercase text-[10px] font-semibold">
-              {point.source}
+              {point.source === "manual" ? "Manuel Kayıt" : "İçe Aktarılan"}
             </span>
           </div>
         </div>
@@ -119,9 +119,9 @@ export function PointDetailBottomSheet({
         {/* Spot Latency */}
         <div className="bg-radar-bg p-3 rounded-lg border border-radar-border flex items-center justify-between">
           <div>
-            <div className="text-radar-subtle text-[10px]">SPOT HTTP LATENCY</div>
+            <div className="text-radar-subtle text-[10px]">ANLIK HTTP GECİKMESİ</div>
             <div className="text-slate-100 font-bold text-sm">
-              {point.httpLatencyMs !== undefined ? `${point.httpLatencyMs} ms` : "Not measured"}
+              {point.httpLatencyMs !== undefined ? `${point.httpLatencyMs} ms` : "Ölçülmedi"}
             </div>
           </div>
           <Button
@@ -129,28 +129,28 @@ export function PointDetailBottomSheet({
             variant="outline"
             disabled={isTestingLatency}
             onClick={handleRetestLatency}
-            className="text-xs px-2.5 py-1 border-radar-border hover:border-radar-teal text-slate-300"
+            className="text-xs px-2.5 py-1 border-radar-border hover:border-radar-teal text-slate-300 font-mono"
           >
-            {isTestingLatency ? "Probing..." : "Test Latency Now"}
+            {isTestingLatency ? "Ölçülüyor..." : "Gecikmeyi Test Et"}
           </Button>
         </div>
 
         {/* GPS Coordinates & Accuracy */}
         <div className="bg-radar-bg p-3 rounded-lg border border-radar-border space-y-1 text-[11px]">
           <div className="flex items-center justify-between">
-            <span className="text-radar-subtle">GPS Coordinates:</span>
+            <span className="text-radar-subtle">GPS Koordinatları:</span>
             <span className="text-slate-200 font-mono">
               {point.lat.toFixed(6)}, {point.lng.toFixed(6)}
             </span>
           </div>
           {point.accuracyMeters !== undefined && (
             <div className="flex items-center justify-between">
-              <span className="text-radar-subtle">GPS Accuracy Radius:</span>
-              <span className="text-radar-blue">±{Math.round(point.accuracyMeters)}m</span>
+              <span className="text-radar-subtle">GPS Hassasiyet Yarıçapı:</span>
+              <span className="text-radar-cyan">±{Math.round(point.accuracyMeters)}m</span>
             </div>
           )}
           <div className="flex items-center justify-between">
-            <span className="text-radar-subtle">Recorded At:</span>
+            <span className="text-radar-subtle">Kayıt Zamanı:</span>
             <span className="text-slate-400">
               {new Date(point.timestamp).toLocaleString()}
             </span>
@@ -160,7 +160,7 @@ export function PointDetailBottomSheet({
         {/* Notes */}
         {point.notes && (
           <div className="bg-radar-bg p-2.5 rounded-lg border border-radar-border text-[11px]">
-            <span className="text-radar-subtle block mb-1">OBSERVATIONS & NOTES:</span>
+            <span className="text-radar-subtle block mb-1">GÖZLEM VE NOTLAR:</span>
             <p className="text-slate-300">{point.notes}</p>
           </div>
         )}
@@ -170,7 +170,7 @@ export function PointDetailBottomSheet({
           <button
             type="button"
             onClick={() => {
-              if (confirm("Are you sure you want to delete this survey point?")) {
+              if (confirm("Bu saha ölçüm noktasını silmek istediğinize emin misiniz?")) {
                 onDeletePoint(point.id);
                 onClose();
               }
@@ -178,11 +178,11 @@ export function PointDetailBottomSheet({
             className="text-red-400 hover:text-red-300 flex items-center gap-1.5 text-xs font-semibold py-1 px-2 rounded hover:bg-red-500/10 transition-colors"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            Delete Point
+            Noktayı Sil
           </button>
 
           <Button onClick={onClose} variant="outline" className="text-xs px-3.5 py-1.5">
-            Close
+            Kapat
           </Button>
         </div>
       </div>

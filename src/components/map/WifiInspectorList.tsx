@@ -10,17 +10,17 @@ interface WifiInspectorListProps {
   onSelectPoint: (point: WifiSurveyPoint) => void;
 }
 
-type BandFilter = "ALL" | "2.4 GHz" | "5 GHz" | "6 GHz";
+type BandFilter = "TÜMÜ" | "2.4 GHz" | "5 GHz" | "6 GHz";
 
 export function WifiInspectorList({ points, onSelectPoint }: WifiInspectorListProps) {
-  const [bandFilter, setBandFilter] = useState<BandFilter>("ALL");
+  const [bandFilter, setBandFilter] = useState<BandFilter>("TÜMÜ");
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<"rssi" | "time" | "ssid">("rssi");
 
   const filteredPoints = useMemo(() => {
     return points
       .filter((p) => {
-        if (bandFilter !== "ALL" && p.band !== bandFilter) return false;
+        if (bandFilter !== "TÜMÜ" && p.band !== bandFilter) return false;
         if (search.trim()) {
           const q = search.toLowerCase();
           const matchSsid = p.ssid?.toLowerCase().includes(q);
@@ -32,7 +32,7 @@ export function WifiInspectorList({ points, onSelectPoint }: WifiInspectorListPr
       })
       .sort((a, b) => {
         if (sortBy === "rssi") {
-          return (b.rssi ?? -999) - (a.rssi ?? -999); // Strongest first
+          return (b.rssi ?? -999) - (a.rssi ?? -999);
         }
         if (sortBy === "time") {
           return b.timestamp - a.timestamp;
@@ -42,16 +42,16 @@ export function WifiInspectorList({ points, onSelectPoint }: WifiInspectorListPr
   }, [points, bandFilter, search, sortBy]);
 
   return (
-    <div className="bg-radar-surface/90 border border-radar-border rounded-xl p-4 sm:p-5 shadow-lg flex flex-col">
+    <div className="bg-radar-surface/90 border border-radar-border rounded-xl p-4 sm:p-5 shadow-noc-card flex flex-col">
       {/* Top Header & Search */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
         <div>
           <h3 className="text-sm font-semibold text-slate-100 flex items-center gap-2">
             <Wifi className="w-4 h-4 text-radar-teal" />
-            Wi-Fi Inspector &amp; Survey Catalog
+            Wi-Fi Denetçisi ve Saha Kataloğu
           </h3>
           <p className="text-xs text-radar-subtle mt-0.5">
-            RF signal strengths, channel allocations, and spot test benchmarks
+            RF sinyal şiddetleri, kanal dağılımları ve yerinde gerçekleştirilen ölçümler
           </p>
         </div>
 
@@ -64,15 +64,15 @@ export function WifiInspectorList({ points, onSelectPoint }: WifiInspectorListPr
               onChange={(e) => setSortBy(e.target.value as "rssi" | "time" | "ssid")}
               className="bg-transparent text-slate-200 outline-none cursor-pointer"
             >
-              <option value="rssi">Signal Strength</option>
-              <option value="time">Latest First</option>
-              <option value="ssid">SSID Name</option>
+              <option value="rssi">Sinyal Şiddeti</option>
+              <option value="time">En Yeni Kayıt</option>
+              <option value="ssid">SSID Adı</option>
             </select>
           </div>
 
           {/* Band filter buttons */}
           <div className="flex items-center gap-1 bg-radar-bg p-1 rounded-lg border border-radar-border text-xs font-mono">
-            {(["ALL", "2.4 GHz", "5 GHz", "6 GHz"] as BandFilter[]).map((bf) => (
+            {(["TÜMÜ", "2.4 GHz", "5 GHz", "6 GHz"] as BandFilter[]).map((bf) => (
               <button
                 key={bf}
                 type="button"
@@ -95,98 +95,92 @@ export function WifiInspectorList({ points, onSelectPoint }: WifiInspectorListPr
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search SSID / Room..."
+              placeholder="SSID / Oda Ara..."
               className="w-full bg-radar-bg border border-radar-border rounded-lg pl-8 pr-2.5 py-1 text-xs font-mono text-slate-200 placeholder-slate-500 focus:outline-none focus:border-radar-teal"
             />
           </div>
         </div>
       </div>
 
-      {/* Network List */}
+      {/* List content */}
       {filteredPoints.length === 0 ? (
-        <div className="py-8 text-center text-xs font-mono text-radar-subtle bg-radar-bg/40 border border-dashed border-radar-border rounded-lg">
-          No surveyed Wi-Fi networks found matching criteria.
+        <div className="py-10 text-center text-xs font-mono text-radar-subtle bg-radar-bg/40 border border-dashed border-radar-border rounded-lg">
+          Kriterlere uyan kayıtlı Wi-Fi ölçüm noktası bulunamadı.
         </div>
       ) : (
-        <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
-          {filteredPoints.map((point) => {
-            const rating = getSignalRating(point.rssi);
+        <div className="overflow-x-auto border border-radar-border/80 rounded-lg max-h-96 overflow-y-auto">
+          <table className="w-full text-left text-xs font-mono">
+            <thead className="bg-radar-bg text-radar-subtle sticky top-0 border-b border-radar-border">
+              <tr>
+                <th className="px-3.5 py-2.5">SSID &amp; Konum</th>
+                <th className="px-3.5 py-2.5">Sinyal (RSSI)</th>
+                <th className="px-3.5 py-2.5">Bant / Kanal</th>
+                <th className="px-3.5 py-2.5">Gecikme</th>
+                <th className="px-3.5 py-2.5">Kayıt Türü</th>
+                <th className="px-3.5 py-2.5 text-right">İşlem</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-radar-border/50">
+              {filteredPoints.map((p) => {
+                const rating = getSignalRating(p.rssi);
 
-            return (
-              <div
-                key={point.id}
-                onClick={() => onSelectPoint(point)}
-                className="bg-radar-bg border border-radar-border/80 hover:border-radar-teal/50 rounded-lg p-3 cursor-pointer transition-all flex items-center justify-between gap-3 text-xs font-mono"
-              >
-                {/* Left: Signal Bars & SSID */}
-                <div className="flex items-center gap-3 min-w-0">
-                  {/* Visual Signal Indicator */}
-                  <div className="flex items-end gap-0.5 h-6 shrink-0">
-                    {[1, 2, 3, 4, 5].map((bar) => (
-                      <div
-                        key={bar}
-                        className="w-1.5 rounded-xs"
-                        style={{
-                          height: `${bar * 4 + 4}px`,
-                          backgroundColor: bar <= rating.bars ? rating.color : "#1E2D44",
-                        }}
-                      />
-                    ))}
-                  </div>
-
-                  <div className="truncate">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-slate-100 truncate text-xs sm:text-sm">
-                        {point.ssid || point.label}
-                      </span>
-                      {point.ssid && point.ssid !== point.label && (
-                        <span className="text-[10px] text-radar-subtle truncate">
-                          ({point.label})
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-2 text-[11px] text-radar-subtle mt-1 flex-wrap">
-                      <span className="bg-radar-surface px-1.5 py-0.2 rounded border border-radar-border text-slate-300">
-                        {point.band || "Unknown Band"}
-                      </span>
-                      {point.channel && (
-                        <span className="bg-radar-surface px-1.5 py-0.2 rounded border border-radar-border text-slate-300">
-                          Ch {point.channel}
-                        </span>
-                      )}
-                      {point.httpLatencyMs && (
-                        <span className="text-radar-blue font-semibold">
-                          {point.httpLatencyMs}ms ping
-                        </span>
-                      )}
-                      <span className="text-[10px] text-slate-500">
-                        {new Date(point.timestamp).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right: dBm badge & Arrow */}
-                <div className="flex items-center gap-2 shrink-0">
-                  <div
-                    className="px-2 py-1 rounded text-center border font-bold text-xs"
-                    style={{
-                      borderColor: `${rating.color}60`,
-                      color: rating.color,
-                      backgroundColor: `${rating.color}15`,
-                    }}
+                return (
+                  <tr
+                    key={p.id}
+                    onClick={() => onSelectPoint(p)}
+                    className="hover:bg-radar-bg/70 cursor-pointer transition-colors"
                   >
-                    {point.rssi !== undefined ? `${point.rssi} dBm` : "N/A"}
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-radar-subtle" />
-                </div>
-              </div>
-            );
-          })}
+                    <td className="px-3.5 py-2.5">
+                      <div className="font-semibold text-slate-100">{p.ssid || "Belirtilmemiş"}</div>
+                      <div className="text-[11px] text-radar-subtle">{p.label}</div>
+                    </td>
+
+                    <td className="px-3.5 py-2.5">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="w-2.5 h-2.5 rounded-full shrink-0"
+                          style={{ backgroundColor: rating.color }}
+                        />
+                        <span className="font-bold text-slate-100">
+                          {p.rssi !== undefined ? `${p.rssi} dBm` : "—"}
+                        </span>
+                        <span className="text-[10px]" style={{ color: rating.color }}>
+                          ({rating.label})
+                        </span>
+                      </div>
+                    </td>
+
+                    <td className="px-3.5 py-2.5 text-slate-300">
+                      <div>{p.band || "—"}</div>
+                      <div className="text-[10px] text-radar-subtle">
+                        {p.channel ? `Kanal ${p.channel}` : "—"}
+                      </div>
+                    </td>
+
+                    <td className="px-3.5 py-2.5">
+                      {p.httpLatencyMs !== undefined ? (
+                        <span className="text-radar-teal font-medium">
+                          {p.httpLatencyMs} ms
+                        </span>
+                      ) : (
+                        <span className="text-slate-500">—</span>
+                      )}
+                    </td>
+
+                    <td className="px-3.5 py-2.5">
+                      <span className="px-2 py-0.5 rounded bg-radar-bg border border-radar-border text-[10px] uppercase text-radar-subtle">
+                        {p.source === "manual" ? "Manuel" : "İçe Aktarılan"}
+                      </span>
+                    </td>
+
+                    <td className="px-3.5 py-2.5 text-right">
+                      <ChevronRight className="w-4 h-4 text-radar-subtle inline-block" />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

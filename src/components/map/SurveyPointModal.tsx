@@ -70,7 +70,7 @@ export function SurveyPointModal({
           setAccuracy(pos.coords.accuracy);
         },
         (err) => {
-          alert(`Could not acquire GPS: ${err.message}`);
+          alert(`GPS konumu alınamadı: ${err.message}`);
         },
         { enableHighAccuracy: true, timeout: 8000 }
       );
@@ -86,7 +86,7 @@ export function SurveyPointModal({
         setMeasuredLatency(res.durationMs);
       }
     } catch (err) {
-      console.warn("Spot latency test failed:", err);
+      console.warn("Anlık gecikme testi başarısız oldu:", err);
     } finally {
       setIsTestingLatency(false);
     }
@@ -94,12 +94,12 @@ export function SurveyPointModal({
 
   const handleSave = () => {
     if (!label.trim()) {
-      alert("Please provide a location note or label (e.g. 'Conference Room A')");
+      alert("Lütfen bir konum etiketi veya oda adı belirtin (örn. 'Toplantı Odası A')");
       return;
     }
 
     if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180 || (lat === 0 && lng === 0)) {
-      alert("Please acquire a valid GPS fix or tap on the map to set location coordinates.");
+      alert("Lütfen geçerli bir GPS konumu alın veya haritadan bir noktaya tıklayın.");
       return;
     }
 
@@ -121,7 +121,6 @@ export function SurveyPointModal({
     };
 
     onSavePoint(point);
-    // Reset form
     setLabel("");
     setSsid("");
     setBssid("");
@@ -133,13 +132,13 @@ export function SurveyPointModal({
   const rating = getSignalRating(rssi);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Log Wi-Fi Field Survey Point">
+    <Modal isOpen={isOpen} onClose={onClose} title="Saha Wi-Fi Ölçüm Noktası Kaydet">
       <div className="space-y-4 text-xs font-mono">
         {/* Capability disclaimer */}
         <div className="p-2.5 rounded-lg bg-radar-bg border border-radar-border flex items-start gap-2 text-radar-subtle text-[11px]">
           <AlertCircle className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
           <div>
-            iOS Safari restricts direct background RF scanning. Enter observed Wi-Fi readings or survey data, and measure live latency at this GPS fix.
+            iOS Safari ve tarayıcı güvenlik kum havuzu doğrudan arka plan Wi-Fi çip taramasını kısıtlar. Bu noktada gözlemlediğiniz sinyal değerini girin ve canlı HTTP gecikmesini test edin.
           </div>
         </div>
 
@@ -148,7 +147,7 @@ export function SurveyPointModal({
           <div className="flex items-center justify-between">
             <span className="text-slate-300 font-semibold flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-radar-teal" />
-              GPS COORDINATES
+              GPS KOORDİNATLARI
             </span>
             <button
               type="button"
@@ -156,13 +155,13 @@ export function SurveyPointModal({
               className="text-radar-teal hover:underline text-[11px] flex items-center gap-1"
             >
               <Navigation className="w-3 h-3" />
-              Refresh Current GPS
+              GPS Konumunu Güncelle
             </button>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="text-[10px] text-radar-subtle block mb-1">LATITUDE</label>
+              <label className="text-[10px] text-radar-subtle block mb-1">ENLEM (LATITUDE)</label>
               <input
                 type="number"
                 step="any"
@@ -172,7 +171,7 @@ export function SurveyPointModal({
               />
             </div>
             <div>
-              <label className="text-[10px] text-radar-subtle block mb-1">LONGITUDE</label>
+              <label className="text-[10px] text-radar-subtle block mb-1">BOYLAM (LONGITUDE)</label>
               <input
                 type="number"
                 step="any"
@@ -184,7 +183,7 @@ export function SurveyPointModal({
           </div>
           {accuracy !== undefined && (
             <div className="text-[10px] text-radar-subtle">
-              GPS Accuracy Radius: <span className="text-radar-blue font-semibold">±{Math.round(accuracy)}m</span>
+              GPS Hassasiyet Yarıçapı: <span className="text-radar-cyan font-semibold">±{Math.round(accuracy)}m</span>
             </div>
           )}
         </div>
@@ -193,13 +192,13 @@ export function SurveyPointModal({
         <div>
           <label className="text-slate-300 font-semibold block mb-1 flex items-center gap-1.5">
             <FileText className="w-3.5 h-3.5 text-radar-teal" />
-            LOCATION LABEL / ROOM NAME *
+            KONUM ETİKETİ / ODA ADI *
           </label>
           <input
             type="text"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
-            placeholder="e.g. Main Conference Room, 2nd Floor Corridor"
+            placeholder="örn. Ana Toplantı Salonu, 2. Kat Koridor"
             className="w-full bg-radar-bg border border-radar-border rounded-lg px-3 py-2 text-slate-100 placeholder-slate-500"
           />
         </div>
@@ -209,13 +208,13 @@ export function SurveyPointModal({
           <div>
             <label className="text-slate-300 font-semibold block mb-1 flex items-center gap-1.5">
               <Wifi className="w-3.5 h-3.5 text-radar-teal" />
-              SSID (NETWORK NAME)
+              SSID (AĞ ADI)
             </label>
             <input
               type="text"
               value={ssid}
               onChange={(e) => setSsid(e.target.value)}
-              placeholder="e.g. Office_Corp_5G"
+              placeholder="örn. Kurumsal_Ofis_5G"
               className="w-full bg-radar-bg border border-radar-border rounded-lg px-3 py-1.5 text-slate-100"
             />
           </div>
@@ -223,7 +222,7 @@ export function SurveyPointModal({
           <div>
             <label className="text-slate-300 font-semibold block mb-1 flex items-center gap-1.5">
               <Radio className="w-3.5 h-3.5 text-radar-teal" />
-              BAND & CHANNEL
+              BANT &amp; KANAL
             </label>
             <div className="grid grid-cols-2 gap-1.5">
               <select
@@ -239,7 +238,7 @@ export function SurveyPointModal({
                 type="number"
                 value={channel || ""}
                 onChange={(e) => setChannel(parseInt(e.target.value) || 0)}
-                placeholder="Ch 36"
+                placeholder="Kanal 36"
                 className="bg-radar-bg border border-radar-border rounded-lg px-2 py-1.5 text-slate-100"
               />
             </div>
@@ -251,7 +250,7 @@ export function SurveyPointModal({
           <div className="flex items-center justify-between mb-2">
             <label className="text-slate-300 font-semibold flex items-center gap-1.5">
               <Sliders className="w-3.5 h-3.5 text-radar-teal" />
-              SIGNAL STRENGTH (RSSI)
+              SİNYAL ŞİDDETİ (RSSI)
             </label>
             <span
               className={`px-2 py-0.5 rounded text-xs font-bold border ${rating.textClass} ${rating.borderClass} bg-radar-bg`}
@@ -267,14 +266,14 @@ export function SurveyPointModal({
             step="1"
             value={rssi}
             onChange={(e) => setRssi(parseInt(e.target.value))}
-            className="w-full accent-radar-teal cursor-pointer"
+            className="w-full accent-radar-cyan cursor-pointer"
           />
 
           <div className="flex justify-between text-[10px] text-radar-subtle mt-1 font-mono">
-            <span>-95 dBm (Critical)</span>
-            <span>-75 dBm (Fair)</span>
-            <span>-50 dBm (Good)</span>
-            <span>-30 dBm (Max)</span>
+            <span>-95 dBm (Kritik)</span>
+            <span>-75 dBm (Orta)</span>
+            <span>-50 dBm (İyi)</span>
+            <span>-30 dBm (Mükemmel)</span>
           </div>
         </div>
 
@@ -282,13 +281,13 @@ export function SurveyPointModal({
         <div className="p-3 bg-radar-bg/70 border border-radar-border rounded-lg flex items-center justify-between gap-2">
           <div>
             <div className="text-slate-300 font-semibold flex items-center gap-1.5">
-              <Activity className="w-3.5 h-3.5 text-radar-blue" />
-              SPOT HTTP LATENCY
+              <Activity className="w-3.5 h-3.5 text-radar-cyan" />
+              ANLIK HTTP GECİKMESİ
             </div>
             <div className="text-[10px] text-radar-subtle mt-0.5">
               {measuredLatency !== undefined
-                ? `Measured: ${measuredLatency} ms`
-                : "Measure live roundtrip latency at this spot"}
+                ? `Ölçülen: ${measuredLatency} ms`
+                : "Bu konumda canlı gidiş-dönüş gecikmesini ölçün"}
             </div>
           </div>
 
@@ -297,20 +296,20 @@ export function SurveyPointModal({
             variant="outline"
             onClick={handleMeasureSpotLatency}
             disabled={isTestingLatency}
-            className="text-xs px-2.5 py-1.5 border-radar-teal/40 text-radar-teal hover:bg-radar-teal/10"
+            className="text-xs px-2.5 py-1.5 border-radar-teal/40 text-radar-teal hover:bg-radar-teal/10 font-mono"
           >
-            {isTestingLatency ? "Probing..." : measuredLatency ? "Re-Test" : "Run Test"}
+            {isTestingLatency ? "Ölçülüyor..." : measuredLatency ? "Yeniden Sına" : "Test Et"}
           </Button>
         </div>
 
         {/* Notes */}
         <div>
-          <label className="text-slate-300 block mb-1">NOTES / OBSERVATIONS (OPTIONAL)</label>
+          <label className="text-slate-300 block mb-1">NOTLAR / GÖZLEMLER (İSTEĞE BAĞLI)</label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={2}
-            placeholder="Wall material, interference sources, antenna orientation..."
+            placeholder="Duvar materyali, girişim kaynakları, anten yönü..."
             className="w-full bg-radar-bg border border-radar-border rounded-lg p-2.5 text-slate-100 placeholder-slate-500 text-xs"
           />
         </div>
@@ -318,13 +317,13 @@ export function SurveyPointModal({
         {/* Modal Actions */}
         <div className="pt-2 flex justify-end gap-2 border-t border-radar-border">
           <Button variant="outline" onClick={onClose} className="text-xs px-3 py-1.5">
-            Cancel
+            İptal
           </Button>
           <Button
             onClick={handleSave}
-            className="bg-radar-teal hover:bg-radar-teal/90 text-slate-950 font-semibold text-xs px-4 py-1.5"
+            className="bg-radar-teal hover:bg-radar-teal/90 text-slate-950 font-semibold text-xs px-4 py-1.5 shadow-noc-glow"
           >
-            Save Survey Point
+            Saha Noktasını Kaydet
           </Button>
         </div>
       </div>

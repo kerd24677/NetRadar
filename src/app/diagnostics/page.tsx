@@ -13,11 +13,11 @@ export default function DiagnosticsPage() {
   const [activeTab, setActiveTab] = useState<string>("http");
 
   const tabs = [
-    { id: "http", label: "HTTP / HTTPS", icon: <Globe className="w-4 h-4" />, badge: "Continuous & Matrix" },
-    { id: "dns", label: "DNS (DoH)", icon: <Server className="w-4 h-4" />, badge: "Multi-Resolver" },
-    { id: "throughput", label: "Throughput", icon: <Gauge className="w-4 h-4" />, badge: "Up & Down" },
-    { id: "tcp", label: "TCP Port Matrix", icon: <Network className="w-4 h-4" />, badge: "10-Port Scan" },
-    { id: "traceroute", label: "Traceroute (Limits)", icon: <GitCommit className="w-4 h-4" />, badge: "Sandbox Policy" },
+    { id: "http", label: "HTTP / HTTPS", icon: <Globe className="w-4 h-4" />, badge: "Kesintisiz & Matris" },
+    { id: "dns", label: "DNS (DoH)", icon: <Server className="w-4 h-4" />, badge: "Çoklu Çözümleyici" },
+    { id: "throughput", label: "Bant Genişliği", icon: <Gauge className="w-4 h-4" />, badge: "İndirme & Yükleme" },
+    { id: "tcp", label: "TCP Port Matrisi", icon: <Network className="w-4 h-4" />, badge: "10-Port Tarama" },
+    { id: "traceroute", label: "Traceroute (Kısıtlar)", icon: <GitCommit className="w-4 h-4" />, badge: "Kum Havuzu" },
   ];
 
   return (
@@ -26,10 +26,10 @@ export default function DiagnosticsPage() {
         <div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
             <Activity className="w-5 h-5 text-radar-teal" />
-            Network Diagnostics Suite
+            Ağ Tanılama ve Sınama Paketi
           </h1>
           <p className="text-xs sm:text-sm text-radar-muted mt-1">
-            Enterprise network telemetry probes: continuous streaming, multi-resolver benchmarks, and port matrix analysis.
+            Gelişmiş ağ telemetri probları: kesintisiz akış, çoklu çözümleyici kıyaslamaları ve port analizi.
           </p>
         </div>
       </div>

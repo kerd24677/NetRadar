@@ -12,49 +12,49 @@ export function TracerouteHonestyView() {
         <CardHeader>
           <CardTitle>
             <GitCommit className="w-4 h-4 text-radar-teal" />
-            ICMP Traceroute & Native Packet Loss Diagnostics
+            ICMP İzleme (Traceroute) & Yerel Paket Kaybı Tanılaması
           </CardTitle>
-          <Badge variant="rose">Sandbox Restricted</Badge>
+          <Badge variant="rose">Sandbox Kısıtlı</Badge>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="p-4 rounded-lg bg-rose-500/10 border border-rose-500/30 text-xs text-rose-300 space-y-2">
             <div className="flex items-center gap-2 font-semibold text-rose-200">
               <AlertOctagon className="w-4 h-4 shrink-0" />
-              <span>Feature Disabled: Simulation Strictly Prohibited</span>
+              <span>Özellik Devre Dışı: Sahte Simülasyon Kesinlikle Yasaktır</span>
             </div>
             <p>
-              In accordance with NetRadar&apos;s strict diagnostic integrity policies, this capability is permanently disabled rather than displaying fabricated or pseudo-simulated hop routes.
+              NetRadar&apos;ın katı tanı dürüstlüğü politikası gereğince, sahte veya yapay olarak türetilmiş yönlendirme atlamaları (hop route) sunmak yerine bu yetenek kalıcı olarak devre dışı bırakılmıştır.
             </p>
           </div>
 
           <div className="space-y-3">
             <h4 className="text-sm font-semibold text-slate-100 flex items-center gap-2">
               <Terminal className="w-4 h-4 text-radar-cyan" />
-              Technical Root Cause & Protocol Constraints
+              Teknik Kök Neden & Protokol Sınırları
             </h4>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
               <div className="p-3.5 rounded-lg bg-radar-bg border border-radar-border space-y-2">
                 <span className="font-semibold text-slate-200 block font-mono text-[11px] uppercase">
-                  1. Browser Security Model (W3C/WHATWG)
+                  1. Tarayıcı Güvenlik Modeli (W3C / WHATWG)
                 </span>
                 <p className="text-radar-muted leading-relaxed">
-                  Web browsers (including Safari on iOS, Chrome, and Firefox) strictly confine JavaScript execution to a high-level application sandbox. Web APIs expose only HTTP fetch, WebSockets, and WebRTC data channels.
+                  Web tarayıcıları (iOS Safari, Chrome ve Firefox dahil), JavaScript yürütmesini üst düzey bir uygulama kum havuzuna (sandbox) hapseder. Web API&apos;leri yalnızca HTTP fetch, WebSocket ve WebRTC veri kanallarını sunar.
                 </p>
                 <p className="text-radar-subtle">
-                  Browsers provide no primitive to forge IP headers, manipulate TTL (Time-To-Live) packet fields, or capture raw ICMP Type 11 (Time Exceeded) replies.
+                  Tarayıcılarda ham IP başlıkları oluşturma, paketlerin TTL (Time-To-Live) alanlarını manipüle etme veya ham ICMP Tip 11 (Süre Aşıldı) yanıtlarını yakalama arayüzü bulunmaz.
                 </p>
               </div>
 
               <div className="p-3.5 rounded-lg bg-radar-bg border border-radar-border space-y-2">
                 <span className="font-semibold text-slate-200 block font-mono text-[11px] uppercase">
-                  2. Cloud Serverless Runtimes (Vercel / Lambda)
+                  2. Sunucusuz Bulut Çalışma Zamanları (Vercel / Lambda)
                 </span>
                 <p className="text-radar-muted leading-relaxed">
-                  Serverless hosting architectures execute inside locked-down microVMs (e.g. AWS Firecracker / V8 Isolates) where Linux kernel capabilities such as <code className="text-radar-teal font-mono">CAP_NET_RAW</code> are dropped.
+                  Sunucusuz (serverless) barındırma mimarileri, <code className="text-radar-teal font-mono">CAP_NET_RAW</code> gibi Linux çekirdek yetkilerinin kaldırıldığı kilitli mikro sanal makinelerde (AWS Firecracker / V8 İzolatları) çalışır.
                 </p>
                 <p className="text-radar-subtle">
-                  Creating a <code className="text-radar-teal font-mono">socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)</code> raises <code className="text-rose-400 font-mono">EPERM</code> (Operation not permitted).
+                  Bu ortamlarda <code className="text-radar-teal font-mono">socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)</code> çağrısı doğrudan <code className="text-rose-400 font-mono">EPERM</code> (İşleme izin verilmedi) hatası döndürür.
                 </p>
               </div>
             </div>
@@ -63,25 +63,25 @@ export function TracerouteHonestyView() {
           {/* Architecture comparison */}
           <div className="p-4 rounded-lg bg-radar-bg border border-radar-border space-y-3">
             <span className="text-xs font-semibold text-slate-200 block">
-              What NetRadar Delivers Instead
+              NetRadar Bunun Yerine Ne Sunuyor?
             </span>
             <ul className="space-y-2 text-xs text-radar-muted">
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-radar-teal shrink-0 mt-0.5" />
                 <span>
-                  <strong className="text-slate-200">Genuine HTTP Latency:</strong> Real application-layer round-trip timing with millisecond resolution via <code className="text-radar-teal font-mono">performance.now()</code>.
+                  <strong className="text-slate-200">Gerçek HTTP Gecikmesi:</strong> <code className="text-radar-teal font-mono">performance.now()</code> üzerinden mikrosaniye hassasiyetli gerçek uygulama katmanı gidiş-dönüş süresi.
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-radar-teal shrink-0 mt-0.5" />
                 <span>
-                  <strong className="text-slate-200">DNS-over-HTTPS (DoH):</strong> Authentic RFC-standard DNS record lookup and latency against worldwide recursive resolvers.
+                  <strong className="text-slate-200">DNS-over-HTTPS (DoH):</strong> Dünya çapındaki özyinelemeli çözümleyicilere karşı RFC standartlarında gerçek DNS kayıt sorguları ve gecikme ölçümü.
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="w-4 h-4 text-radar-teal shrink-0 mt-0.5" />
                 <span>
-                  <strong className="text-slate-200">TCP Handshake Probes:</strong> Genuine Layer-4 TCP SYN/ACK timing via NetRadar&apos;s protected backend runtime.
+                  <strong className="text-slate-200">TCP El Sıkışma Sondaları:</strong> NetRadar&apos;ın korumalı arka uç çalışma zamanı üzerinden gerçek Katman 4 TCP SYN/ACK süre ölçümü.
                 </span>
               </li>
             </ul>

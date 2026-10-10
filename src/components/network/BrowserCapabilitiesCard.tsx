@@ -22,8 +22,8 @@ export function BrowserCapabilitiesCard() {
 
     setEnvInfo({
       userAgent: navigator.userAgent,
-      platform: navigator.platform || "Unknown",
-      language: navigator.language || "en",
+      platform: navigator.platform || "Bilinmiyor",
+      language: navigator.language || "tr",
       screenResolution: `${window.screen.width} x ${window.screen.height}`,
       viewportSize: `${window.innerWidth} x ${window.innerHeight}`,
       devicePixelRatio: window.devicePixelRatio || 1,
@@ -41,12 +41,12 @@ export function BrowserCapabilitiesCard() {
   if (!envInfo) return null;
 
   const capabilities = [
-    { label: "Service Worker (PWA Shell)", supported: envInfo.serviceWorkerSupported },
-    { label: "IndexedDB (Local Vault)", supported: envInfo.indexedDbSupported },
-    { label: "WebSocket Protocol", supported: envInfo.webSocketSupported },
-    { label: "WebRTC Data Channels", supported: envInfo.webRtcSupported },
-    { label: "Secure Context (HTTPS / TLS)", supported: envInfo.secureContext },
-    { label: "Standalone PWA Mode", supported: envInfo.isStandalonePwa },
+    { label: "Service Worker (PWA Çekirdeği)", supported: envInfo.serviceWorkerSupported },
+    { label: "IndexedDB (Yerel Depo)", supported: envInfo.indexedDbSupported },
+    { label: "WebSocket Protokolü", supported: envInfo.webSocketSupported },
+    { label: "WebRTC Veri Kanalları", supported: envInfo.webRtcSupported },
+    { label: "Güvenli Bağlam (HTTPS/TLS)", supported: envInfo.secureContext },
+    { label: "Bağımsız PWA Modu", supported: envInfo.isStandalonePwa },
   ];
 
   return (
@@ -54,10 +54,10 @@ export function BrowserCapabilitiesCard() {
       <CardHeader>
         <CardTitle>
           <Monitor className="w-4 h-4 text-radar-teal" />
-          Browser Environment & Web APIs
+          Tarayıcı Ortamı ve Web API Yetenekleri
         </CardTitle>
         <Badge variant={envInfo.isIos ? "cyan" : "teal"}>
-          {envInfo.isIos ? "Apple WebKit / iOS" : "Web Engine"}
+          {envInfo.isIos ? "Apple WebKit / iOS" : "Web Motoru"}
         </Badge>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -72,12 +72,12 @@ export function BrowserCapabilitiesCard() {
               {cap.supported ? (
                 <Badge variant="emerald" className="px-1.5 py-0.2">
                   <Check className="w-3 h-3" />
-                  Active
+                  Aktif
                 </Badge>
               ) : (
                 <Badge variant="muted" className="px-1.5 py-0.2">
                   <X className="w-3 h-3" />
-                  No
+                  Yok
                 </Badge>
               )}
             </div>
@@ -87,26 +87,20 @@ export function BrowserCapabilitiesCard() {
         {/* System Specs */}
         <div className="bg-radar-bg p-3.5 rounded-lg border border-radar-border space-y-2 text-xs font-mono">
           <div className="flex justify-between">
-            <span className="text-radar-subtle">Display Resolution:</span>
-            <span className="text-slate-200">{envInfo.screenResolution} (@{envInfo.devicePixelRatio}x scale)</span>
+            <span className="text-radar-subtle">Ekran Çözünürlüğü:</span>
+            <span className="text-slate-200">{envInfo.screenResolution} (@{envInfo.devicePixelRatio}x ölçek)</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-radar-subtle">Viewport Geometry:</span>
+            <span className="text-radar-subtle">Görüntü Alanı Boyutu:</span>
             <span className="text-slate-200">{envInfo.viewportSize}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-radar-subtle">Locale / Language:</span>
+            <span className="text-radar-subtle">Yerel Dil / Konum:</span>
             <span className="text-slate-200">{envInfo.language}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-radar-subtle">Client Timezone:</span>
-            <span className="text-slate-200">{Intl.DateTimeFormat().resolvedOptions().timeZone}</span>
-          </div>
-          <div className="pt-1 border-t border-radar-border/40">
-            <span className="text-radar-subtle block mb-1">User Agent:</span>
-            <p className="text-[11px] text-slate-300 break-all leading-relaxed">
-              {envInfo.userAgent}
-            </p>
+            <span className="text-radar-subtle">İşletim Platformu:</span>
+            <span className="text-slate-200">{envInfo.platform}</span>
           </div>
         </div>
       </CardContent>

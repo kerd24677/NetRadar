@@ -43,8 +43,8 @@ export function HistoryDetailModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Telemetry Record Details"
-      description={`ID: ${item.id}`}
+      title="Telemetri Kayıt Ayrıntıları"
+      description={`Kayıt ID: ${item.id}`}
       className="max-w-2xl"
     >
       <div className="space-y-4">
@@ -52,14 +52,14 @@ export function HistoryDetailModal({
         <div className="p-3.5 rounded-lg bg-radar-bg border border-radar-border flex items-center justify-between">
           <div>
             <span className="text-[11px] font-mono text-radar-subtle uppercase block">
-              {item.category.toUpperCase()} Target
+              {item.category.toUpperCase()} Hedefi
             </span>
             <span className="text-sm sm:text-base font-bold font-mono text-white mt-0.5 block break-all">
               {item.target}
             </span>
           </div>
           <Badge variant={statusVariant} className="text-xs">
-            {item.status.toUpperCase()}
+            {item.status === "success" ? "BAŞARILI" : item.status === "warning" ? "UYARI" : "HATA"}
           </Badge>
         </div>
 
@@ -67,7 +67,7 @@ export function HistoryDetailModal({
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
             <span className="text-[11px] font-mono text-radar-subtle uppercase block">
-              Duration
+              Süre
             </span>
             <span className="text-base font-bold font-mono text-white mt-0.5 block">
               {formatDuration(item.durationMs)}
@@ -76,7 +76,7 @@ export function HistoryDetailModal({
 
           <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
             <span className="text-[11px] font-mono text-radar-subtle uppercase block">
-              Timestamp
+              Zaman Damgası
             </span>
             <span className="text-xs font-mono text-slate-200 mt-1 block">
               {formatDateFull(item.startTime)}
@@ -85,41 +85,52 @@ export function HistoryDetailModal({
 
           <div className="bg-radar-bg p-3 rounded-lg border border-radar-border col-span-2 sm:col-span-1">
             <span className="text-[11px] font-mono text-radar-subtle uppercase block">
-              Storage
+              Depolama
             </span>
             <span className="text-xs font-mono text-slate-200 mt-1 block">
-              Local IndexedDB
+              Yerel IndexedDB
             </span>
           </div>
         </div>
 
         {/* Summary & Error */}
         <div className="space-y-2">
-          <span className="text-xs font-mono text-radar-subtle uppercase block">Summary</span>
+          <span className="text-xs font-mono text-radar-subtle uppercase block">Özet</span>
           <p className="text-xs font-mono text-slate-200 bg-radar-bg p-3 rounded-lg border border-radar-border">
             {item.summary}
           </p>
         </div>
 
         {item.errorMessage && (
-          <div className="space-y-1">
-            <span className="text-xs font-mono text-rose-400 uppercase block">Error Details</span>
-            <p className="text-xs font-mono text-rose-300 bg-rose-500/10 p-3 rounded-lg border border-rose-500/20 leading-relaxed">
+          <div className="space-y-2">
+            <span className="text-xs font-mono text-rose-400 uppercase block">Hata Ayrıntısı</span>
+            <p className="text-xs font-mono text-rose-300 bg-rose-500/10 p-3 rounded-lg border border-rose-500/20">
               {item.errorMessage}
             </p>
           </div>
         )}
 
-        {/* Raw Payload JSON */}
-        <div className="space-y-1.5">
+        {/* JSON Payload Inspection */}
+        <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono text-radar-subtle uppercase">Raw Telemetry JSON</span>
+            <span className="text-xs font-mono text-radar-subtle uppercase">
+              Ham Telemetri JSON
+            </span>
             <button
               onClick={copyJson}
-              className="text-xs text-radar-teal hover:underline flex items-center gap-1 font-mono"
+              className="text-xs font-mono text-radar-teal hover:underline flex items-center gap-1"
             >
-              {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-              {copied ? "Copied" : "Copy JSON"}
+              {copied ? (
+                <>
+                  <Check className="w-3 h-3 text-emerald-400" />
+                  Kopyalandı!
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3 h-3" />
+                  JSON Kopyala
+                </>
+              )}
             </button>
           </div>
           <pre className="bg-radar-bg p-3 rounded-lg border border-radar-border text-[11px] font-mono text-slate-300 max-h-48 overflow-y-auto overflow-x-auto">
@@ -127,7 +138,7 @@ export function HistoryDetailModal({
           </pre>
         </div>
 
-        {/* Actions */}
+        {/* Footer Actions */}
         <div className="flex items-center justify-between pt-3 border-t border-radar-border">
           <Button
             variant="danger"
@@ -138,11 +149,11 @@ export function HistoryDetailModal({
             }}
             leftIcon={<Trash2 className="w-3.5 h-3.5" />}
           >
-            Delete Record
+            Bu Kaydı Sil
           </Button>
 
           <Button variant="secondary" size="sm" onClick={onClose}>
-            Close
+            Kapat
           </Button>
         </div>
       </div>

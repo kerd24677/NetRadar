@@ -6,9 +6,9 @@ import { BottomNav } from "@/components/layout/BottomNav";
 import { OfflineBanner } from "@/components/layout/OfflineBanner";
 
 export const metadata: Metadata = {
-  title: "NetRadar — Professional Network Diagnostics PWA",
+  title: "NetRadar — Profesyonel Ağ Tanılama & NOC PWA",
   description:
-    "Production-grade network diagnostics suite with real HTTP latency measurements, DNS-over-HTTPS queries, and persistent local IndexedDB history.",
+    "Gerçek HTTP gecikme ölçümleri, DNS-over-HTTPS sorguları, Wi-Fi kapsama haritalaması ve yerel telemetri arşivi içeren profesyonel ağ analiz PWA'sı.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -36,7 +36,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="tr" className="dark">
       <head>
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>

@@ -32,7 +32,7 @@ export function OfflineBanner() {
       <div className="flex items-center gap-2 max-w-7xl mx-auto">
         <WifiOff className="w-4 h-4 text-rose-400 shrink-0" />
         <span>
-          <strong>Offline Mode Active:</strong> Device lost network connectivity. Application shell and local test history remain available via Service Worker and IndexedDB, but live probes will fail.
+          <strong>Çevrimdışı Mod Aktif:</strong> Cihaz ağ bağlantısını kaybetti. Uygulama kabuğu ve yerel test geçmişi Service Worker ve IndexedDB üzerinden kullanılabilir durumdadır; ancak canlı ağ sondaları başarısız olacaktır.
         </span>
       </div>
     </div>

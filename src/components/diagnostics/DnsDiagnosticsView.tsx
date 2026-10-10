@@ -53,12 +53,12 @@ export function DnsDiagnosticsView() {
         endTime: res.timestamp,
         durationMs: res.durationMs,
         status: res.status === "success" ? "success" : "error",
-        summary: `DNS ${res.recordType} query: ${res.answers.length} record(s) via ${res.statusText}`,
+        summary: `DNS ${res.recordType} sorgusu: ${res.answers.length} kayıt (${res.statusText})`,
         details: { dns: res },
         errorMessage: res.errorMessage,
       });
     } catch (err) {
-      console.error("DNS query error:", err);
+      console.error("DNS sorgu hatası:", err);
     } finally {
       setIsLoading(false);
     }
@@ -70,36 +70,36 @@ export function DnsDiagnosticsView() {
         <CardHeader>
           <CardTitle>
             <Server className="w-4 h-4 text-radar-teal" />
-            DNS-over-HTTPS (DoH) Resolver
+            DNS-over-HTTPS (DoH) Çözümleyici
           </CardTitle>
           <Badge variant="cyan">RFC 8427 / DNS-JSON</Badge>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="p-3.5 rounded-lg bg-radar-elevated/40 border border-radar-border text-xs text-radar-muted space-y-1">
-            <p className="text-slate-200 font-medium">DNS Architecture Clarification:</p>
+            <p className="text-slate-200 font-medium">DNS Mimarisi Açıklaması:</p>
             <p>
-              Web browsers cannot open raw UDP sockets on port 53. NetRadar performs genuine recursive queries using standard DNS-over-HTTPS (DoH) endpoints.
+              Web tarayıcıları 53 numaralı bağlantı noktasında ham UDP soketleri açamaz. NetRadar, standart DNS-over-HTTPS (DoH) uç noktalarını kullanarak gerçek özyinelemeli sorgular gerçekleştirir.
             </p>
             <p className="text-radar-subtle text-[11px] pt-1">
-              DoH latency measures HTTPS transport round-trip to the chosen resolver plus resolver cache/authoritative lookup time, not raw UDP 53 latency.
+              DoH gecikmesi, seçilen çözümleyiciye yapılan HTTPS taşıma gidiş-dönüş süresi ile çözümleyici önbellek/yetkili arama süresini ölçer; ham UDP 53 gecikmesini değil.
             </p>
           </div>
 
           {/* Form */}
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
             <div className="sm:col-span-5 space-y-1.5">
-              <label className="text-xs font-mono text-radar-subtle block">Domain / Hostname</label>
+              <label className="text-xs font-mono text-radar-subtle block">Alan Adı / Hostname</label>
               <input
                 type="text"
                 value={domainInput}
                 onChange={(e) => setDomainInput(e.target.value)}
-                placeholder="e.g. example.com"
+                placeholder="Örn: google.com"
                 className="w-full bg-radar-bg border border-radar-border rounded-lg px-3.5 py-2.5 text-sm font-mono text-slate-100 placeholder:text-radar-subtle focus:outline-none focus:ring-1 focus:ring-radar-teal"
               />
             </div>
 
             <div className="sm:col-span-3 space-y-1.5">
-              <label className="text-xs font-mono text-radar-subtle block">Record Type</label>
+              <label className="text-xs font-mono text-radar-subtle block">Kayıt Türü</label>
               <select
                 value={recordType}
                 onChange={(e) => setRecordType(e.target.value as DnsRecordType)}
@@ -114,7 +114,7 @@ export function DnsDiagnosticsView() {
             </div>
 
             <div className="sm:col-span-4 space-y-1.5">
-              <label className="text-xs font-mono text-radar-subtle block">DoH Resolver</label>
+              <label className="text-xs font-mono text-radar-subtle block">DoH Çözümleyici</label>
               <select
                 value={resolverUrl}
                 onChange={(e) => setResolverUrl(e.target.value)}
@@ -131,7 +131,7 @@ export function DnsDiagnosticsView() {
 
           {/* Preset domains */}
           <div className="flex flex-wrap items-center gap-2 pt-1">
-            <span className="text-xs text-radar-subtle font-mono">Popular:</span>
+            <span className="text-xs text-radar-subtle font-mono">Popüler:</span>
             {["google.com", "cloudflare.com", "github.com", "apple.com", "microsoft.com"].map(
               (preset) => (
                 <button
@@ -152,7 +152,7 @@ export function DnsDiagnosticsView() {
               disabled={!domainInput.trim()}
               leftIcon={<RefreshCw className="w-4 h-4" />}
             >
-              Resolve DNS Records
+              DNS Kayıtlarını Çözümle
             </Button>
           </div>
         </CardContent>
@@ -164,7 +164,7 @@ export function DnsDiagnosticsView() {
           <CardHeader>
             <CardTitle>
               <Database className="w-4 h-4 text-radar-teal" />
-              DoH Query Results for <span className="font-mono text-white">{result.domain}</span> ({result.recordType})
+              DoH Çözümleme Sonuçları: <span className="font-mono text-white">{result.domain}</span> ({result.recordType})
             </CardTitle>
             <Badge variant={result.status === "success" ? "emerald" : "rose"}>
               {result.statusText}
@@ -173,31 +173,31 @@ export function DnsDiagnosticsView() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
-                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Round-Trip Time</span>
+                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Gidiş-Dönüş Süresi</span>
                 <span className="text-lg font-bold font-mono text-white mt-0.5 block">
                   {formatDuration(result.durationMs)}
                 </span>
-                <span className="text-[10px] text-radar-muted">DoH HTTP Round-trip</span>
+                <span className="text-[10px] text-radar-muted">DoH HTTP Süresi</span>
               </div>
 
               <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
-                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Records Found</span>
+                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Bulunan Kayıt</span>
                 <span className="text-lg font-bold font-mono text-white mt-0.5 block">
                   {result.answers.length}
                 </span>
-                <span className="text-[10px] text-radar-muted">{result.recordType} Records</span>
+                <span className="text-[10px] text-radar-muted">{result.recordType} Kaydı</span>
               </div>
 
               <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
-                <span className="text-[11px] font-mono text-radar-subtle uppercase block">DNSSEC Validated</span>
+                <span className="text-[11px] font-mono text-radar-subtle uppercase block">DNSSEC Doğrulandı</span>
                 <span className="text-lg font-bold font-mono text-white mt-0.5 block">
-                  {result.dnssecValidated ? "Yes (AD flag)" : "No"}
+                  {result.dnssecValidated ? "Evet (AD bayrağı)" : "Hayır"}
                 </span>
-                <span className="text-[10px] text-radar-muted">Authentic Data</span>
+                <span className="text-[10px] text-radar-muted">Orijinal Veri</span>
               </div>
 
               <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
-                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Status Code</span>
+                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Durum Kodu</span>
                 <span className="text-base font-bold font-mono text-white mt-0.5 block">
                   RCODE {result.statusCode}
                 </span>
@@ -211,10 +211,10 @@ export function DnsDiagnosticsView() {
                 <table className="w-full text-left text-xs font-mono">
                   <thead className="bg-radar-elevated text-radar-subtle border-b border-radar-border">
                     <tr>
-                      <th className="p-2.5">Name</th>
-                      <th className="p-2.5">Type</th>
+                      <th className="p-2.5">Ad</th>
+                      <th className="p-2.5">Tür</th>
                       <th className="p-2.5">TTL</th>
-                      <th className="p-2.5">Record Data</th>
+                      <th className="p-2.5">Kayıt Verisi</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-radar-border bg-radar-bg">
@@ -234,8 +234,8 @@ export function DnsDiagnosticsView() {
             ) : (
               <div className="p-4 rounded-lg bg-radar-bg border border-radar-border text-center text-xs text-radar-muted">
                 {result.status === "success"
-                  ? `No ${result.recordType} records exist for ${result.domain}. Resolver returned 0 answers.`
-                  : result.errorMessage || "DNS query failed."}
+                  ? `${result.domain} için ${result.recordType} kaydı bulunamadı. Çözümleyici 0 yanıt döndürdü.`
+                  : result.errorMessage || "DNS sorgusu başarısız oldu."}
               </div>
             )}
 
@@ -243,7 +243,7 @@ export function DnsDiagnosticsView() {
               <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-xs text-rose-300 flex items-start gap-2.5">
                 <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
                 <p>
-                  <strong>Query Notice:</strong> {result.errorMessage}
+                  <strong>Sorgu Bildirimi:</strong> {result.errorMessage}
                 </p>
               </div>
             )}

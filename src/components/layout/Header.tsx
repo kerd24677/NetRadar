@@ -22,7 +22,6 @@ export function Header() {
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
 
-    // Detect standalone PWA mode
     const isStandalone =
       window.matchMedia("(display-mode: standalone)").matches ||
       Boolean((navigator as unknown as { standalone?: boolean }).standalone);
@@ -48,11 +47,11 @@ export function Header() {
                 NET<span className="text-radar-teal font-extrabold">RADAR</span>
               </span>
               <span className="hidden sm:inline-block text-[10px] font-mono uppercase px-1.5 py-0.5 rounded bg-radar-elevated text-radar-teal border border-radar-border">
-                NOC v1.0
+                NOC v2.0
               </span>
             </div>
             <p className="hidden md:block text-[11px] text-radar-subtle leading-none">
-              Professional Network Diagnostics PWA
+              Profesyonel Ağ Analiz ve Tanılama Laboratuvarı
             </p>
           </div>
         </Link>
@@ -62,21 +61,21 @@ export function Header() {
           {isPwaInstalled && (
             <Badge variant="cyan" className="hidden sm:inline-flex">
               <Shield className="w-3 h-3" />
-              PWA Mode
+              PWA Modu
             </Badge>
           )}
 
           {/* Browser Connectivity Hint */}
           <div className="flex items-center gap-1.5">
             {isOnline ? (
-              <Badge variant="teal" pulse={true} title="Browser reports navigator.onLine = true">
+              <Badge variant="teal" pulse={true} title="Tarayıcı navigator.onLine = true bildiriyor">
                 <Wifi className="w-3 h-3" />
-                <span className="hidden xs:inline">ONLINE</span>
+                <span className="hidden xs:inline">ÇEVRİMİÇİ</span>
               </Badge>
             ) : (
-              <Badge variant="rose" title="Browser reports navigator.onLine = false">
+              <Badge variant="rose" title="Tarayıcı navigator.onLine = false bildiriyor">
                 <WifiOff className="w-3 h-3" />
-                <span>OFFLINE</span>
+                <span>ÇEVRİMDIŞI</span>
               </Badge>
             )}
           </div>

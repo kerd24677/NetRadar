@@ -47,10 +47,10 @@ export default function SettingsPage() {
       <div>
         <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
           <Settings className="w-5 h-5 text-radar-teal" />
-          Settings & Configuration
+          Ayarlar ve Yapılandırma
         </h1>
         <p className="text-xs sm:text-sm text-radar-muted mt-1">
-          Customize DNS-over-HTTPS resolvers, request timeouts, and view iPhone PWA installation instructions.
+          DNS-over-HTTPS çözümleyicilerini, prob zaman aşımlarını yapılandırın ve iPhone Safari PWA kurulum adımlarını inceleyin.
         </p>
       </div>
 
@@ -59,14 +59,14 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle>
             <Server className="w-4 h-4 text-radar-teal" />
-            DNS-over-HTTPS Resolver Configuration
+            DNS-over-HTTPS Çözümleyici Yapılandırması
           </CardTitle>
-          <Badge variant="teal">RFC 8427</Badge>
+          <Badge variant="teal">RFC 8484</Badge>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <label className="text-xs font-mono text-radar-subtle block">
-              Default DoH Provider
+              Varsayılan DoH Sağlayıcısı
             </label>
             <div className="space-y-2">
               {DOH_RESOLVERS.map((res) => {
@@ -96,7 +96,7 @@ export default function SettingsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-semibold text-white">{res.name}</span>
-                        {isSelected && <Badge variant="emerald" className="text-[10px]">Active</Badge>}
+                        {isSelected && <Badge variant="emerald" className="text-[10px]">Aktif</Badge>}
                       </div>
                       <p className="text-xs text-radar-muted mt-0.5">{res.description}</p>
                       <code className="text-[11px] text-radar-teal font-mono block mt-1 truncate">
@@ -116,14 +116,14 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle>
             <Clock className="w-4 h-4 text-radar-teal" />
-            Diagnostic Engine Parameters
+            Tanılama Motoru Parametreleri
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="text-xs font-mono text-radar-subtle block">
-                HTTP & DNS Query Timeout
+                HTTP &amp; DNS Sorgu Zaman Aşımı
               </label>
               <select
                 value={settings.defaultTimeoutMs}
@@ -132,18 +132,18 @@ export default function SettingsPage() {
                 }
                 className="w-full bg-radar-bg border border-radar-border rounded-lg px-3 py-2 text-sm font-mono text-slate-100 focus:outline-none focus:ring-1 focus:ring-radar-teal"
               >
-                <option value={3000}>3,000 ms (Fast)</option>
-                <option value={5000}>5,000 ms (Standard)</option>
-                <option value={10000}>10,000 ms (High latency links)</option>
+                <option value={3000}>3,000 ms (Hızlı)</option>
+                <option value={5000}>5,000 ms (Standart)</option>
+                <option value={10000}>10,000 ms (Yüksek gecikmeli hatlar)</option>
               </select>
               <span className="text-[10px] text-radar-muted block">
-                Maximum duration before aborting unresponsive network probes.
+                Yanıt vermeyen ağ problarının kesilmesinden önceki maksimum bekleme süresi.
               </span>
             </div>
 
             <div className="space-y-1.5">
               <label className="text-xs font-mono text-radar-subtle block">
-                Default Speed Test Payload
+                Varsayılan Hız Testi Veri Boyutu
               </label>
               <select
                 value={settings.speedPayloadSizeMb}
@@ -152,23 +152,23 @@ export default function SettingsPage() {
                 }
                 className="w-full bg-radar-bg border border-radar-border rounded-lg px-3 py-2 text-sm font-mono text-slate-100 focus:outline-none focus:ring-1 focus:ring-radar-teal"
               >
-                <option value={1}>1.0 MB (Fast check)</option>
-                <option value={2}>2.0 MB (Recommended)</option>
-                <option value={5}>5.0 MB (High speed connections)</option>
+                <option value={1}>1.0 MB (Hızlı kontrol)</option>
+                <option value={2}>2.0 MB (Önerilen)</option>
+                <option value={5}>5.0 MB (Yüksek hızlı bağlantılar)</option>
               </select>
               <span className="text-[10px] text-radar-muted block">
-                Controls size of raw byte stream transferred during throughput testing.
+                Bant genişliği ölçümünde indirilen/yüklenen ham veri akışının boyutu.
               </span>
             </div>
           </div>
 
           <div className="pt-2 flex items-center gap-3">
-            <Button onClick={handleSave}>
-              Save Preferences
+            <Button onClick={handleSave} className="shadow-noc-glow">
+              Tercihleri Kaydet
             </Button>
             {savedSuccess && (
               <span className="text-xs text-emerald-400 font-mono flex items-center gap-1.5">
-                <CheckCircle2 className="w-4 h-4" /> Preferences saved!
+                <CheckCircle2 className="w-4 h-4" /> Ayarlar kaydedildi!
               </span>
             )}
           </div>
@@ -180,13 +180,13 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle>
             <Smartphone className="w-4 h-4 text-radar-teal" />
-            iOS Safari Home Screen Installation (PWA)
+            iOS Safari Ana Ekrana Ekleme (PWA Kurulumu)
           </CardTitle>
-          <Badge variant="cyan">Standalone Mode</Badge>
+          <Badge variant="cyan">Tam Ekran Modu</Badge>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-xs text-radar-muted leading-relaxed">
-            NetRadar is engineered as an installable Progressive Web App (PWA) compliant with Apple WebKit specifications. When added to the Home Screen, it runs in fullscreen standalone mode with native safe-area adaptation and offline capability.
+            NetRadar, Apple WebKit standartlarıyla tam uyumlu çalışan bir Progressive Web App (PWA) olarak tasarlanmıştır. iPhone Ana Ekranına eklendiğinde tarayıcı adres çubuğu olmadan tam ekran çalışır ve çevrimdışı önbellekleme desteği sunar.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
@@ -194,9 +194,9 @@ export default function SettingsPage() {
               <div className="w-7 h-7 rounded-md bg-radar-elevated border border-radar-border flex items-center justify-center text-radar-teal text-xs font-bold font-mono">
                 1
               </div>
-              <span className="text-xs font-semibold text-slate-200 block">Open in Safari</span>
+              <span className="text-xs font-semibold text-slate-200 block">Safari&apos;de Aç</span>
               <p className="text-[11px] text-radar-subtle leading-normal">
-                Navigate to your deployed HTTPS URL on iPhone using Apple Safari.
+                iPhone cihazınızda Apple Safari tarayıcısını kullanarak uygulamanın HTTPS adresine gidin.
               </p>
             </div>
 
@@ -204,9 +204,9 @@ export default function SettingsPage() {
               <div className="w-7 h-7 rounded-md bg-radar-elevated border border-radar-border flex items-center justify-center text-radar-teal text-xs font-bold font-mono">
                 <Share className="w-4 h-4" />
               </div>
-              <span className="text-xs font-semibold text-slate-200 block">Tap Share</span>
+              <span className="text-xs font-semibold text-slate-200 block">Paylaş&apos;a Dokun</span>
               <p className="text-[11px] text-radar-subtle leading-normal">
-                Tap the Safari toolbar Share icon at the bottom of your screen.
+                Ekranın altındaki Safari araç çubuğunda bulunan Paylaş (Share) simgesine dokunun.
               </p>
             </div>
 
@@ -214,9 +214,9 @@ export default function SettingsPage() {
               <div className="w-7 h-7 rounded-md bg-radar-elevated border border-radar-border flex items-center justify-center text-radar-teal text-xs font-bold font-mono">
                 <PlusSquare className="w-4 h-4" />
               </div>
-              <span className="text-xs font-semibold text-slate-200 block">Add to Home Screen</span>
+              <span className="text-xs font-semibold text-slate-200 block">Ana Ekrana Ekle</span>
               <p className="text-[11px] text-radar-subtle leading-normal">
-                Scroll down the action sheet and select &apos;Add to Home Screen&apos;.
+                Açılan menüde aşağı kaydırarak &apos;Ana Ekrana Ekle&apos; seçeneğine dokunun.
               </p>
             </div>
 
@@ -224,9 +224,9 @@ export default function SettingsPage() {
               <div className="w-7 h-7 rounded-md bg-radar-elevated border border-radar-border flex items-center justify-center text-radar-teal text-xs font-bold font-mono">
                 <ShieldCheck className="w-4 h-4" />
               </div>
-              <span className="text-xs font-semibold text-slate-200 block">Launch Standalone</span>
+              <span className="text-xs font-semibold text-slate-200 block">Bağımsız Başlat</span>
               <p className="text-[11px] text-radar-subtle leading-normal">
-                Open NetRadar from your iOS Home Screen icon without browser chrome.
+                Ana ekranınızdaki NetRadar simgesine dokunarak yerel uygulama gibi tam ekran kullanın.
               </p>
             </div>
           </div>
@@ -238,13 +238,13 @@ export default function SettingsPage() {
         <CardHeader>
           <CardTitle>
             <Trash2 className="w-4 h-4 text-rose-400" />
-            Storage & Local Vault Maintenance
+            Depolama ve Yerel Kasa Bakımı
           </CardTitle>
-          <Badge variant="rose">Destructive Action</Badge>
+          <Badge variant="rose">Kalıcı İşlem</Badge>
         </CardHeader>
         <CardContent className="space-y-3">
           <p className="text-xs text-radar-muted">
-            All telemetry history is persisted exclusively on this device inside IndexedDB. If you want to wipe all records and restore default settings, you may purge local vault data here.
+            Tüm telemetri geçmişi yalnızca bu cihazdaki IndexedDB deposunda saklanır. Tüm geçmiş kayıtları sıfırlamak isterseniz yerel depoyu buradan temizleyebilirsiniz.
           </p>
           <Button
             variant="danger"
@@ -252,7 +252,7 @@ export default function SettingsPage() {
             onClick={() => setIsPurgeModalOpen(true)}
             leftIcon={<Trash2 className="w-3.5 h-3.5" />}
           >
-            Purge All Local Data
+            Tüm Yerel Verileri Temizle
           </Button>
         </CardContent>
       </Card>
@@ -261,12 +261,12 @@ export default function SettingsPage() {
       <Modal
         isOpen={isPurgeModalOpen}
         onClose={() => setIsPurgeModalOpen(false)}
-        title="Purge Local Database"
-        description="Permanently clear all cached measurements"
+        title="Yerel Veritabanını Temizle"
+        description="Önbelleğe alınan tüm ölçümleri kalıcı olarak sil"
       >
         <div className="space-y-4">
           <p className="text-xs sm:text-sm text-radar-muted">
-            This will immediately remove all diagnostic history from IndexedDB. Proceed?
+            Bu işlem IndexedDB üzerindeki tüm tanılama geçmişini derhal silecektir. Devam etmek istiyor musunuz?
           </p>
           <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-radar-border">
             <Button
@@ -274,14 +274,14 @@ export default function SettingsPage() {
               size="sm"
               onClick={() => setIsPurgeModalOpen(false)}
             >
-              Cancel
+              İptal
             </Button>
             <Button
               variant="danger"
               size="sm"
               onClick={handlePurgeStorage}
             >
-              Purge Database
+              Veritabanını Temizle
             </Button>
           </div>
         </div>

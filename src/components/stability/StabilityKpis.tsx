@@ -27,7 +27,7 @@ export function StabilityKpis({ stats, isRunning }: StabilityKpisProps) {
         <div className="flex items-center justify-between text-radar-subtle text-xs font-mono mb-1">
           <span className="flex items-center gap-1">
             <Clock className="w-3.5 h-3.5 text-radar-teal" />
-            MEAN LATENCY
+            ORTALAMA GECİKME
           </span>
           {stats.completedCount > 0 && (
             <span className="text-[10px] text-slate-400">Med: {stats.medianLatency}ms</span>
@@ -46,7 +46,7 @@ export function StabilityKpis({ stats, isRunning }: StabilityKpisProps) {
           </div>
           <div className="text-[10px] font-mono text-radar-subtle mt-1 flex items-center justify-between">
             <span>Min: {stats.minLatency}ms</span>
-            <span>Max: {stats.maxLatency}ms</span>
+            <span>Maks: {stats.maxLatency}ms</span>
           </div>
         </div>
       </div>
@@ -56,9 +56,9 @@ export function StabilityKpis({ stats, isRunning }: StabilityKpisProps) {
         <div className="flex items-center justify-between text-radar-subtle text-xs font-mono mb-1">
           <span className="flex items-center gap-1">
             <TrendingDown className="w-3.5 h-3.5 text-radar-blue" />
-            P95 LATENCY
+            P95 GECİKME
           </span>
-          <span className="text-[10px] text-slate-400">95th %ile</span>
+          <span className="text-[10px] text-slate-400">95. Yüzdelik</span>
         </div>
         <div>
           <div className="text-xl sm:text-2xl font-mono font-bold text-radar-blue flex items-baseline gap-1">
@@ -72,7 +72,7 @@ export function StabilityKpis({ stats, isRunning }: StabilityKpisProps) {
             )}
           </div>
           <div className="text-[10px] font-mono text-radar-subtle mt-1">
-            {stats.completedCount > 0 ? "Tail latency threshold" : "Awaiting probes"}
+            {stats.completedCount > 0 ? "Kuyruk gecikmesi eşiği" : "Ölçüm bekleniyor"}
           </div>
         </div>
       </div>
@@ -90,10 +90,10 @@ export function StabilityKpis({ stats, isRunning }: StabilityKpisProps) {
                   : "text-radar-teal"
               }`}
             />
-            HTTP FAILURE RATIO
+            HTTP BAŞARISIZLIK
           </span>
           <span
-            title="Application-layer HTTP request failure ratio. Modern web browsers cannot execute raw ICMP packet pings."
+            title="Uygulama katmanı HTTP istek başarısızlık oranı. Modern web tarayıcıları doğrudan ICMP paket testi yapamaz."
             className="cursor-help"
           >
             <HelpCircle className="w-3 h-3 text-radar-subtle" />
@@ -111,15 +111,14 @@ export function StabilityKpis({ stats, isRunning }: StabilityKpisProps) {
           >
             {stats.totalSent > 0 ? (
               <>
-                {stats.failureRatio}
-                <span className="text-xs font-normal text-radar-subtle">%</span>
+                %{stats.failureRatio}
               </>
             ) : (
-              "0.0%"
+              "%0.0"
             )}
           </div>
           <div className="text-[10px] font-mono text-radar-subtle mt-1 truncate">
-            {stats.failedCount} failed of {stats.totalSent} probes
+            {stats.totalSent} probdan {stats.failedCount} başarısız
           </div>
         </div>
       </div>
@@ -129,10 +128,10 @@ export function StabilityKpis({ stats, isRunning }: StabilityKpisProps) {
         <div className="flex items-center justify-between text-radar-subtle text-xs font-mono mb-1">
           <span className="flex items-center gap-1">
             <Zap className="w-3.5 h-3.5 text-amber-400" />
-            APP JITTER (RFC 3550)
+            SEĞİRME (RFC 3550)
           </span>
           <span
-            title="Application-layer delay variance using RFC 3550 inter-arrival difference modeling. Browsers measure HTTP/HTTPS round-trip timing, not raw packet-level UDP jitter."
+            title="RFC 3550 ortalama mutlak fark (MAD) formülüyle hesaplanan gecikme değişimi. Tarayıcı HTTP RTT dalgalanmasını modeller."
             className="cursor-help"
           >
             <HelpCircle className="w-3 h-3 text-radar-subtle" />
@@ -150,7 +149,7 @@ export function StabilityKpis({ stats, isRunning }: StabilityKpisProps) {
             )}
           </div>
           <div className="text-[10px] font-mono text-radar-subtle mt-1 truncate">
-            HTTP round-trip variance (MAD)
+            Gecikme varyansı (MAD)
           </div>
         </div>
       </div>
@@ -160,22 +159,22 @@ export function StabilityKpis({ stats, isRunning }: StabilityKpisProps) {
         <div className="flex items-center justify-between text-radar-subtle text-xs font-mono mb-1">
           <span className="flex items-center gap-1">
             <Layers className="w-3.5 h-3.5 text-radar-teal" />
-            OUTAGES
+            KESİNTİLER
           </span>
           {isRunning && (
             <span className="inline-flex items-center gap-1 text-[10px] text-radar-teal font-mono">
               <span className="w-1.5 h-1.5 rounded-full bg-radar-teal animate-pulse" />
-              LIVE
+              CANLI
             </span>
           )}
         </div>
         <div>
           <div className="text-xl sm:text-2xl font-mono font-bold text-slate-100 flex items-baseline gap-1">
             {stats.outageCount}
-            <span className="text-xs font-normal text-radar-subtle">detected</span>
+            <span className="text-xs font-normal text-radar-subtle">olay</span>
           </div>
           <div className="text-[10px] font-mono text-radar-subtle mt-1">
-            Max consecutive errors: {stats.maxConsecutiveFailures}
+            Maks ardışık hata: {stats.maxConsecutiveFailures}
           </div>
         </div>
       </div>

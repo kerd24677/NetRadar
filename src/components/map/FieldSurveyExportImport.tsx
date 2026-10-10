@@ -224,14 +224,14 @@ export function FieldSurveyExportImport({
 
             if (imported.length > 0) {
               onImportPoints(imported);
-              alert(`Successfully imported ${imported.length} survey points from CSV!`);
+              alert(`${imported.length} adet saha ölçüm noktası CSV dosyasından başarıyla içe aktarıldı!`);
             } else {
-              alert("Could not extract points from CSV format.");
+              alert("CSV biçiminden geçerli ölçüm noktaları çıkarılamadı.");
             }
           }
         }
       } catch (err) {
-        alert("Failed to parse survey file: " + (err as Error).message);
+        alert("Saha dosyası ayrıştırılamadı: " + (err as Error).message);
       } finally {
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
@@ -242,7 +242,7 @@ export function FieldSurveyExportImport({
   };
 
   return (
-    <div className="bg-radar-surface/90 border border-radar-border rounded-xl p-4 sm:p-5 shadow-lg flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
+    <div className="bg-radar-surface/90 border border-radar-border rounded-xl p-4 sm:p-5 shadow-noc-card flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
       {/* File input (hidden) */}
       <input
         ref={fileInputRef}
@@ -253,9 +253,9 @@ export function FieldSurveyExportImport({
       />
 
       <div>
-        <span className="font-semibold text-slate-200 block">SURVEY DATA PORTABILITY</span>
+        <span className="font-semibold text-slate-200 block">SAHA VERİSİ TAŞINABİLİRLİĞİ</span>
         <span className="text-radar-subtle text-[11px]">
-          Export to GIS/GeoJSON or import external Wi-Fi analyzer survey traces
+          GIS/GeoJSON formatında dışa aktarın veya harici Wi-Fi analiz izlerini içe aktarın
         </span>
       </div>
 
@@ -267,7 +267,7 @@ export function FieldSurveyExportImport({
           className="border-radar-border hover:bg-radar-bg text-slate-300 text-xs px-2.5 py-1.5 flex items-center gap-1.5"
         >
           <Upload className="w-3.5 h-3.5 text-radar-teal" />
-          Import File
+          Dosya İçe Aktar
         </Button>
 
         <Button
@@ -278,7 +278,7 @@ export function FieldSurveyExportImport({
           className="border-radar-border hover:bg-radar-bg text-slate-300 text-xs px-2.5 py-1.5 flex items-center gap-1.5 disabled:opacity-40"
         >
           <FileSpreadsheet className="w-3.5 h-3.5 text-radar-teal" />
-          Export CSV
+          CSV Dışa Aktar
         </Button>
 
         <Button
@@ -289,14 +289,14 @@ export function FieldSurveyExportImport({
           className="border-radar-border hover:bg-radar-bg text-slate-300 text-xs px-2.5 py-1.5 flex items-center gap-1.5 disabled:opacity-40"
         >
           <FileCode className="w-3.5 h-3.5 text-radar-blue" />
-          Export GeoJSON
+          GeoJSON Dışa Aktar
         </Button>
 
         {points.length > 0 && (
           <Button
             type="button"
             onClick={() => {
-              if (confirm("Are you sure you want to clear all survey points?")) {
+              if (confirm("Tüm saha ölçüm noktalarını silmek istediğinize emin misiniz?")) {
                 onClearPoints();
               }
             }}
@@ -304,7 +304,7 @@ export function FieldSurveyExportImport({
             className="border-red-500/40 text-red-400 hover:bg-red-500/10 text-xs px-2.5 py-1.5 flex items-center gap-1"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            Clear
+            Temizle
           </Button>
         )}
       </div>

@@ -8,24 +8,24 @@ import { ShieldX } from "lucide-react";
 export function NativeHardwareNoticeCard() {
   const restrictedMetrics = [
     {
-      metric: "Wi-Fi Signal Strength (RSSI / dBm)",
-      reason: "Requires CoreWLAN / NetworkExtension entitlement. WebKit strictly forbids hardware RF access to prevent indoor geolocation tracking.",
+      metric: "Wi-Fi Sinyal Şiddeti (RSSI / dBm)",
+      reason: "CoreWLAN / NetworkExtension sistem yetkisi gerektirir. WebKit, iç mekan konum takibini engellemek için doğrudan RF erişimini yasaklar.",
     },
     {
-      metric: "Access Point BSSID & Channel",
-      reason: "BSSID constitutes a global geographic identifier; Apple blocks access without active Location Services permissions and native entitlements.",
+      metric: "Erişim Noktası BSSID & Kanal",
+      reason: "BSSID küresel bir coğrafi tanımlayıcıdır; Apple, aktif Konum Servisi izinleri ve yerel uygulama imzası olmadan erişimi engeller.",
     },
     {
-      metric: "Cellular RSRP / RSRQ / Tower ID",
-      reason: "CoreTelephony baseband diagnostics are reserved exclusively for signed native iOS carrier bundles.",
+      metric: "Hücresel RSRP / RSRQ / Baz İstasyonu ID",
+      reason: "CoreTelephony modem tanıları yalnızca imzalı yerel iOS operatör paketlerine ayrılmıştır.",
     },
     {
-      metric: "Kernel Routing Table & ARP Cache",
-      reason: "Web sandbox does not grant access to sysctl / procfs networking sockets or raw interface ARP resolution.",
+      metric: "Çekirdek Yönlendirme Tablosu & ARP Önbelleği",
+      reason: "Web kum havuzu sysctl/procfs soketlerine veya doğrudan arayüz ARP çözümlemesine erişim izni vermez.",
     },
     {
-      metric: "Raw Packet Capture (PCAP)",
-      reason: "Requires raw BPF (Berkeley Packet Filter) devices; impossible from browser execution contexts.",
+      metric: "Ham Paket Yakalama (PCAP / Wireshark)",
+      reason: "Ham BPF (Berkeley Packet Filter) aygıtları gerektirir; tarayıcı çalıştırma ortamlarından yürütülemez.",
     },
   ];
 
@@ -34,13 +34,13 @@ export function NativeHardwareNoticeCard() {
       <CardHeader>
         <CardTitle>
           <ShieldX className="w-4 h-4 text-radar-amber" />
-          Native Mobile OS Sandbox Boundaries (iOS Safari & WebKit)
+          Mobil İşletim Sistemi Güvenlik Kum Havuzu Sınırları (iOS Safari &amp; WebKit)
         </CardTitle>
-        <Badge variant="amber">Strict Platform Isolation</Badge>
+        <Badge variant="amber">Sıkı Platform İzolasyonu</Badge>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-xs text-radar-muted leading-relaxed">
-          As a professional diagnostics platform, NetRadar provides total architectural transparency. The following low-level telecommunication parameters are structurally inaccessible to web applications by operating system design:
+          Profesyonel bir ağ analiz platformu olarak NetRadar tam teknik şeffaflık sağlar. Aşağıdaki düşük seviyeli telekomünikasyon parametrelerine işletim sistemi güvenlik politikası nedeniyle web uygulamaları tarafından doğrudan erişilemez:
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

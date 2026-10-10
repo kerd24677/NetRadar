@@ -25,7 +25,6 @@ export function ConnectionStatusCard() {
     window.addEventListener("online", updateOnline);
     window.addEventListener("offline", updateOnline);
 
-    // Read NetworkInformation API (Chromium/Android; unsupported in iOS Safari)
     const nav = navigator as unknown as {
       connection?: {
         effectiveType?: string;
@@ -73,10 +72,10 @@ export function ConnectionStatusCard() {
       <CardHeader>
         <CardTitle>
           <Activity className="w-4 h-4 text-radar-teal" />
-          Browser Network Telemetry
+          Tarayıcı Ağ Telemetrisi
         </CardTitle>
         <Badge variant={isOnline ? "teal" : "rose"} pulse={isOnline}>
-          {isOnline ? "ONLINE (HINT)" : "OFFLINE"}
+          {isOnline ? "ÇEVRİMİÇİ (İŞARET)" : "ÇEVRİMDIŞI"}
         </Badge>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -84,8 +83,8 @@ export function ConnectionStatusCard() {
         <div className="flex items-start gap-2.5 p-3 rounded-lg bg-radar-elevated/60 border border-radar-border text-xs text-radar-muted">
           <Info className="w-4 h-4 text-radar-cyan shrink-0 mt-0.5" />
           <p>
-            <strong className="text-slate-200">OS Network Hint:</strong> Browser{" "}
-            <code className="text-radar-teal font-mono">navigator.onLine</code> reflects the local interface state. It does not verify internet gateway reachability or WAN packet transit.
+            <strong className="text-slate-200">İşletim Sistemi Ağ İpucu:</strong> Tarayıcı{" "}
+            <code className="text-radar-teal font-mono">navigator.onLine</code> bayrağı yerel ağ arayüzünün durumunu yansıtır. Doğrudan genel internet veya ağ geçidi erişilebilirliğini garanti etmez.
           </p>
         </div>
 
@@ -93,59 +92,59 @@ export function ConnectionStatusCard() {
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
             <span className="text-[11px] font-mono text-radar-subtle uppercase block">
-              Effective Profile
+              Etkin Ağ Profili
             </span>
             <span className="text-base font-semibold text-slate-100 font-mono mt-0.5 block">
               {connectionInfo.supported && connectionInfo.effectiveType
                 ? connectionInfo.effectiveType.toUpperCase()
-                : "Not exposed"}
+                : "Açıklanmıyor"}
             </span>
             <span className="text-[10px] text-radar-muted">
               {connectionInfo.supported
-                ? "Heuristic class (NetworkInfo)"
-                : "Unsupported on iOS Safari / WebKit"}
+                ? "Sezgisel sınıf (NetworkInfo)"
+                : "iOS Safari / WebKit'te kısıtlı"}
             </span>
           </div>
 
           <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
             <span className="text-[11px] font-mono text-radar-subtle uppercase block">
-              Estimated Downlink
+              Tahmini İndirme Hızı
             </span>
             <span className="text-base font-semibold text-slate-100 font-mono mt-0.5 block">
               {connectionInfo.supported && connectionInfo.downlink !== undefined
                 ? `${connectionInfo.downlink} Mbps`
-                : "Not exposed"}
+                : "Açıklanmıyor"}
             </span>
             <span className="text-[10px] text-radar-muted">
-              {connectionInfo.supported ? "Browser estimate" : "Unsupported on iOS Safari / WebKit"}
+              {connectionInfo.supported ? "Tarayıcı tahmini" : "iOS Safari / WebKit'te kısıtlı"}
             </span>
           </div>
 
           <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
             <span className="text-[11px] font-mono text-radar-subtle uppercase block">
-              Estimated RTT
+              Tahmini RTT Gecikmesi
             </span>
             <span className="text-base font-semibold text-slate-100 font-mono mt-0.5 block">
               {connectionInfo.supported && connectionInfo.rtt !== undefined
                 ? `${connectionInfo.rtt} ms`
-                : "Not exposed"}
+                : "Açıklanmıyor"}
             </span>
             <span className="text-[10px] text-radar-muted">
-              {connectionInfo.supported ? "Browser heuristic" : "Unavailable in iOS WebKit"}
+              {connectionInfo.supported ? "Tarayıcı tahmini" : "iOS WebKit'te kullanılamaz"}
             </span>
           </div>
 
           <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
             <span className="text-[11px] font-mono text-radar-subtle uppercase block">
-              Data Saver Mode
+              Veri Tasarrufu Modu
             </span>
             <span className="text-base font-semibold text-slate-100 font-mono mt-0.5 block">
               {connectionInfo.supported && connectionInfo.saveData !== undefined
-                ? connectionInfo.saveData ? "Enabled" : "Disabled"
-                : "Not exposed"}
+                ? connectionInfo.saveData ? "Etkin" : "Devre Dışı"
+                : "Açıklanmıyor"}
             </span>
             <span className="text-[10px] text-radar-muted">
-              {connectionInfo.supported ? "Client hint" : "No client preference"}
+              {connectionInfo.supported ? "İstemci tercihi" : "İstemci tercihi yok"}
             </span>
           </div>
         </div>

@@ -98,13 +98,13 @@ export function MultiCdnBenchmarkCard() {
       <CardHeader>
         <CardTitle>
           <Zap className="w-4 h-4 text-radar-teal" />
-          Global Anycast & CDN Latency Matrix
+          Küresel Anycast & CDN Gecikme Matrisi
         </CardTitle>
         <div className="flex items-center gap-2">
           {fastestName && (
             <Badge variant="emerald" className="hidden sm:inline-flex gap-1">
               <Trophy className="w-3 h-3 text-amber-400" />
-              Fastest: {fastestName}
+              En Hızlı: {fastestName}
             </Badge>
           )}
           <Button
@@ -114,13 +114,13 @@ export function MultiCdnBenchmarkCard() {
             isLoading={isBenchmarking}
             leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
           >
-            Probe All
+            Tümünü Sına
           </Button>
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
         <p className="text-xs text-radar-muted">
-          Concurrent real-time HTTP round-trip measurements to major global anycast edges from your current browser environment:
+          Mevcut tarayıcı ortamınızdan önde gelen küresel anycast uç noktalarına eşzamanlı gerçek zamanlı HTTP gidiş-dönüş ölçümleri:
         </p>
 
         <div className="space-y-2.5 pt-1">
@@ -153,7 +153,7 @@ export function MultiCdnBenchmarkCard() {
 
                   <div className="shrink-0 flex items-center gap-1.5 font-mono">
                     {item.isLoading ? (
-                      <span className="text-xs text-radar-teal animate-pulse">Probing...</span>
+                      <span className="text-xs text-radar-teal animate-pulse">Sınanıyor...</span>
                     ) : item.durationMs > 0 ? (
                       <>
                         <span
@@ -166,7 +166,7 @@ export function MultiCdnBenchmarkCard() {
                         {isWinner && <Trophy className="w-3.5 h-3.5 text-amber-400 inline" />}
                       </>
                     ) : (
-                      <span className="text-xs text-radar-muted">Pending</span>
+                      <span className="text-xs text-radar-muted">Beklemede</span>
                     )}
                   </div>
                 </div>

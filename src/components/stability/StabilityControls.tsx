@@ -38,18 +38,18 @@ const PRESET_TARGETS = [
 ];
 
 const INTERVAL_OPTIONS = [
-  { label: "500 ms (Fast)", value: 500 },
-  { label: "1.0 s (Standard)", value: 1000 },
-  { label: "2.0 s (Relaxed)", value: 2000 },
-  { label: "5.0 s (Slow)", value: 5000 },
+  { label: "500 ms (Hızlı)", value: 500 },
+  { label: "1.0 sn (Standart)", value: 1000 },
+  { label: "2.0 sn (Gevşek)", value: 2000 },
+  { label: "5.0 sn (Yavaş)", value: 5000 },
 ];
 
 const DURATION_OPTIONS = [
-  { label: "1 Min", value: 1 },
-  { label: "5 Min", value: 5 },
-  { label: "15 Min", value: 15 },
-  { label: "30 Min", value: 30 },
-  { label: "Continuous", value: 0 },
+  { label: "1 Dakika", value: 1 },
+  { label: "5 Dakika", value: 5 },
+  { label: "15 Dakika", value: 15 },
+  { label: "30 Dakika", value: 30 },
+  { label: "Sürekli / Kesintisiz", value: 0 },
 ];
 
 export function StabilityControls({
@@ -72,16 +72,16 @@ export function StabilityControls({
   );
 
   return (
-    <div className="bg-radar-surface/90 border border-radar-border rounded-xl p-4 sm:p-5 shadow-lg space-y-4">
+    <div className="bg-radar-surface/90 border border-radar-border rounded-xl p-4 sm:p-5 shadow-noc-card space-y-4">
       {/* Target Selection & Presets */}
       <div>
         <div className="flex items-center justify-between mb-2">
           <label className="text-xs font-mono font-medium text-slate-300 flex items-center gap-1.5">
             <Globe className="w-3.5 h-3.5 text-radar-teal" />
-            TARGET ENDPOINT (HTTP / HTTPS)
+            HEDEF UÇ NOKTA (HTTP / HTTPS)
           </label>
           <span className="text-[11px] font-mono text-radar-subtle">
-            {isRunning ? "Testing in progress" : "Configurable target"}
+            {isRunning ? "Ölçüm devam ediyor" : "Özelleştirilebilir hedef"}
           </span>
         </div>
 
@@ -115,7 +115,7 @@ export function StabilityControls({
                 : "bg-radar-bg text-slate-400 border-radar-border hover:border-slate-600 hover:text-slate-200"
             } ${isRunning ? "opacity-60 cursor-not-allowed" : ""}`}
           >
-            Custom Target
+            Özel Hedef
           </button>
         </div>
 
@@ -137,7 +137,7 @@ export function StabilityControls({
         <div>
           <label className="text-xs font-mono text-slate-400 flex items-center gap-1.5 mb-1.5">
             <Timer className="w-3.5 h-3.5 text-radar-teal" />
-            PROBE INTERVAL
+            ÖLÇÜM SIKLIĞI (ARALIK)
           </label>
           <select
             value={intervalMs}
@@ -156,7 +156,7 @@ export function StabilityControls({
         <div>
           <label className="text-xs font-mono text-slate-400 flex items-center gap-1.5 mb-1.5">
             <Clock className="w-3.5 h-3.5 text-radar-teal" />
-            TEST DURATION
+            TEST SÜRESİ
           </label>
           <select
             value={durationMinutes}
@@ -179,10 +179,10 @@ export function StabilityControls({
           {!isRunning ? (
             <Button
               onClick={onStart}
-              className="bg-radar-teal hover:bg-radar-teal/90 text-slate-950 font-semibold px-4 py-2 text-xs sm:text-sm flex items-center gap-2"
+              className="bg-radar-teal hover:bg-radar-teal/90 text-slate-950 font-semibold px-4 py-2 text-xs sm:text-sm flex items-center gap-2 shadow-noc-glow"
             >
               <Play className="w-4 h-4 fill-current" />
-              Start Stability Probe
+              Kararlılık Ölçümünü Başlat
             </Button>
           ) : (
             <Button
@@ -191,7 +191,7 @@ export function StabilityControls({
               className="border-red-500/50 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-semibold px-4 py-2 text-xs sm:text-sm flex items-center gap-2"
             >
               <Square className="w-4 h-4 fill-current" />
-              Stop Test
+              Testi Durdur
             </Button>
           )}
 
@@ -202,7 +202,7 @@ export function StabilityControls({
             className="border-radar-border hover:bg-radar-bg text-slate-400 hover:text-slate-200 text-xs px-3 py-2 flex items-center gap-1.5 disabled:opacity-40"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            Reset
+            Sıfırla
           </Button>
         </div>
 
@@ -212,8 +212,8 @@ export function StabilityControls({
             onClick={onExportCsv}
             variant="outline"
             disabled={!hasData}
-            className="border-radar-border hover:bg-radar-bg text-slate-300 text-xs px-2.5 py-1.5 flex items-center gap-1 disabled:opacity-40"
-            title="Export session data as CSV"
+            className="border-radar-border hover:bg-radar-bg text-slate-300 text-xs px-2.5 py-1.5 flex items-center gap-1 disabled:opacity-40 font-mono"
+            title="Oturum verisini CSV olarak kaydet"
           >
             <FileSpreadsheet className="w-3.5 h-3.5 text-radar-teal" />
             CSV
@@ -222,8 +222,8 @@ export function StabilityControls({
             onClick={onExportJson}
             variant="outline"
             disabled={!hasData}
-            className="border-radar-border hover:bg-radar-bg text-slate-300 text-xs px-2.5 py-1.5 flex items-center gap-1 disabled:opacity-40"
-            title="Export session data as JSON"
+            className="border-radar-border hover:bg-radar-bg text-slate-300 text-xs px-2.5 py-1.5 flex items-center gap-1 disabled:opacity-40 font-mono"
+            title="Oturum verisini JSON olarak kaydet"
           >
             <FileCode className="w-3.5 h-3.5 text-radar-blue" />
             JSON

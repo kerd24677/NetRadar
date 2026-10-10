@@ -17,14 +17,14 @@ interface PortScanItem {
 const COMMON_PORT_DEFINITIONS: { port: number; service: string }[] = [
   { port: 80, service: "HTTP Web" },
   { port: 443, service: "HTTPS Web (TLS)" },
-  { port: 22, service: "SSH Remote" },
+  { port: 22, service: "SSH Uzak Bağlantı" },
   { port: 53, service: "DNS (TCP)" },
   { port: 853, service: "DNS-over-TLS" },
   { port: 8080, service: "HTTP-Alt / Proxy" },
   { port: 8443, service: "HTTPS-Alt" },
-  { port: 3306, service: "MySQL Database" },
+  { port: 3306, service: "MySQL Veritabanı" },
   { port: 5432, service: "PostgreSQL DB" },
-  { port: 25, service: "SMTP Mail" },
+  { port: 25, service: "SMTP E-Posta" },
 ];
 
 export function MultiPortScannerCard({ targetHost = "cloudflare.com" }: { targetHost?: string }) {
@@ -72,31 +72,39 @@ export function MultiPortScannerCard({ targetHost = "cloudflare.com" }: { target
 
         const openCount = mapped.filter((m) => m.status === "open").length;
         setScanSummary(
-          `Scan completed for ${data.resolvedIp || host}: ${openCount} open ports identified out of ${mapped.length} checked.`
+          `${data.resolvedIp || host} için tarama tamamlandı: Kontrol edilen ${mapped.length} porttan ${openCount} tanesi açık tespit edildi.`
         );
       } else if (data.status === "forbidden") {
-        setScanSummary(data.message || "SSRF Protection blocked private network probe.");
+        setScanSummary(data.message || "SSRF Koruması özel ağ hedefine yönelik taramayı engelledi.");
       }
     } catch (err) {
-      console.warn("Port scan request error:", err);
-      setScanSummary("Backend scan error or timeout occurred.");
+      console.warn("Port tarama hatası:", err);
+      setScanSummary("Arka uç tarama hatası veya zaman aşımı oluştu.");
     } finally {
       setIsScanning(false);
     }
   }
+
+  const statusLabels: Record<string, string> = {
+    open: "AÇIK",
+    closed: "KAPALI",
+    timeout: "ZAMAN AŞIMI",
+    forbidden: "YASAKLI",
+    pending: "BEKLİYOR",
+  };
 
   return (
     <Card className="mt-4 border-radar-indigo/20">
       <CardHeader>
         <CardTitle>
           <Network className="w-4 h-4 text-radar-indigo" />
-          Multi-Port Service Matrix Scanner
+          Çoklu Port Servis Matrisi Tarayıcısı
         </CardTitle>
-        <Badge variant="cyan">Node.js Handshake Agent</Badge>
+        <Badge variant="cyan">Node.js El Sıkışma Aracısı</Badge>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-xs text-radar-muted">
-          Performs concurrent Layer-4 TCP handshakes against standard enterprise service ports with automatic SSRF filtering:
+          Standart kurumsal servis bağlantı noktalarına karşı otomatik SSRF filtreleme eşliğinde eşzamanlı Katman-4 TCP el sıkışmaları gerçekleştirir:
         </p>
 
         {/* Input & Action */}
@@ -105,7 +113,7 @@ export function MultiPortScannerCard({ targetHost = "cloudflare.com" }: { target
             type="text"
             value={host}
             onChange={(e) => setHost(e.target.value)}
-            placeholder="Host or domain to scan (e.g. 1.1.1.1)"
+            placeholder="Taranacak host veya alan adı (örn: 1.1.1.1)"
             className="flex-1 bg-radar-bg border border-radar-border rounded-lg px-3 py-2 text-xs sm:text-sm font-mono text-slate-100 placeholder:text-radar-subtle focus:outline-none focus:ring-1 focus:ring-radar-teal"
           />
           <Button
@@ -114,7 +122,7 @@ export function MultiPortScannerCard({ targetHost = "cloudflare.com" }: { target
             isLoading={isScanning}
             leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
           >
-            Scan Common Ports (10)
+            Sık Kullanılan Portları Tara (10)
           </Button>
         </div>
 
@@ -159,7 +167,7 @@ export function MultiPortScannerCard({ targetHost = "cloudflare.com" }: { target
                       }
                       className="text-[9px] uppercase px-1.5 py-0"
                     >
-                      {item.status}
+                      {statusLabels[item.status] || item.status}
                     </Badge>
                   </div>
 
@@ -169,7 +177,7 @@ export function MultiPortScannerCard({ targetHost = "cloudflare.com" }: { target
 
                   <span className="text-[10px] font-mono text-radar-muted mt-1 block">
                     {isPending ? (
-                      <span className="animate-pulse text-radar-teal">Probing...</span>
+                      <span className="animate-pulse text-radar-teal">Sınanıyor...</span>
                     ) : item.durationMs > 0 ? (
                       formatDuration(item.durationMs)
                     ) : (

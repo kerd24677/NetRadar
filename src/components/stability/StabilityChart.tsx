@@ -47,16 +47,16 @@ export function StabilityChart({ points, p95Latency }: StabilityChartProps) {
   }, [filteredPoints]);
 
   return (
-    <div className="bg-radar-surface/90 border border-radar-border rounded-xl p-4 sm:p-5 shadow-lg flex flex-col">
+    <div className="bg-radar-surface/90 border border-radar-border rounded-xl p-4 sm:p-5 shadow-noc-card flex flex-col">
       {/* Header & Filter Controls */}
       <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
         <div>
           <h3 className="text-sm font-semibold text-slate-100 flex items-center gap-2">
             <BarChart3 className="w-4 h-4 text-radar-teal" />
-            Response Latency & Stability Timeline
+            Yanıt Gecikmesi ve Kararlılık Zaman Çizelgesi
           </h3>
           <p className="text-xs text-radar-subtle mt-0.5">
-            Real HTTP round-trip timing with failure indicators
+            Hata belirteçleriyle gerçek HTTP gidiş-dönüş süreleri (RTT)
           </p>
         </div>
 
@@ -71,7 +71,7 @@ export function StabilityChart({ points, p95Latency }: StabilityChartProps) {
                 : "text-slate-400 hover:text-slate-200"
             }`}
           >
-            Last 30
+            Son 30
           </button>
           <button
             type="button"
@@ -82,7 +82,7 @@ export function StabilityChart({ points, p95Latency }: StabilityChartProps) {
                 : "text-slate-400 hover:text-slate-200"
             }`}
           >
-            Last 100
+            Son 100
           </button>
           <button
             type="button"
@@ -93,7 +93,7 @@ export function StabilityChart({ points, p95Latency }: StabilityChartProps) {
                 : "text-slate-400 hover:text-slate-200"
             }`}
           >
-            All ({points.length})
+            Tümü ({points.length})
           </button>
         </div>
       </div>
@@ -102,9 +102,9 @@ export function StabilityChart({ points, p95Latency }: StabilityChartProps) {
       {points.length === 0 ? (
         <div className="h-64 sm:h-72 flex flex-col items-center justify-center text-center p-6 bg-radar-bg/50 border border-dashed border-radar-border rounded-lg">
           <BarChart3 className="w-10 h-10 text-radar-subtle mb-2.5" />
-          <p className="text-sm font-medium text-slate-300">No stability measurements yet</p>
+          <p className="text-sm font-medium text-slate-300">Henüz kararlılık ölçümü yapılmadı</p>
           <p className="text-xs text-radar-muted max-w-sm mt-1">
-            Start a stability probe above to observe genuine HTTP latency fluctuations, jitter variance, and outage events.
+            Gerçek HTTP gecikme dalgalanmalarını, seğirme varyansını ve kesinti anlarını izlemek için yukarıdaki testi başlatın.
           </p>
         </div>
       ) : (
@@ -135,29 +135,29 @@ export function StabilityChart({ points, p95Latency }: StabilityChartProps) {
                     return (
                       <div className="bg-radar-surface/95 border border-radar-border p-3 rounded-lg shadow-xl text-xs font-mono backdrop-blur-md min-w-[190px]">
                         <div className="flex items-center justify-between border-b border-radar-border/80 pb-1 mb-1.5">
-                          <span className="text-radar-subtle">Probe #{data.seq}</span>
+                          <span className="text-radar-subtle">Prob #{data.seq}</span>
                           <span className="text-[10px] text-slate-400">{data.time}</span>
                         </div>
                         <div className="space-y-1">
                           <div className="flex items-center justify-between">
-                            <span className="text-slate-400">Duration:</span>
+                            <span className="text-slate-400">Gecikme:</span>
                             <span className="font-bold text-radar-teal">
-                              {data.latency !== null ? `${data.latency} ms` : "Failed"}
+                              {data.latency !== null ? `${data.latency} ms` : "Başarısız"}
                             </span>
                           </div>
                           <div className="flex items-center justify-between">
-                            <span className="text-slate-400">Status:</span>
+                            <span className="text-slate-400">Durum:</span>
                             <span
                               className={`font-semibold ${
                                 isErr ? "text-red-400" : "text-emerald-400"
                               }`}
                             >
-                              {data.status.toUpperCase()}
+                              {isErr ? "BAŞARISIZ" : "BAŞARILI"}
                             </span>
                           </div>
                           {data.httpStatus ? (
                             <div className="flex items-center justify-between">
-                              <span className="text-slate-400">HTTP Code:</span>
+                              <span className="text-slate-400">HTTP Kodu:</span>
                               <span className="text-slate-200">{data.httpStatus}</span>
                             </div>
                           ) : null}
@@ -176,34 +176,34 @@ export function StabilityChart({ points, p95Latency }: StabilityChartProps) {
               {p95Latency && p95Latency > 0 && (
                 <ReferenceLine
                   y={p95Latency}
-                  stroke="#46A8FF"
+                  stroke="#00F0FF"
                   strokeDasharray="4 4"
                   label={{
-                    value: `p95 (${p95Latency}ms)`,
-                    fill: "#46A8FF",
+                    value: `P95 (${p95Latency}ms)`,
+                    fill: "#00F0FF",
                     fontSize: 10,
                     position: "top",
                   }}
                 />
               )}
-              {/* Latency line for successful probes */}
+              {/* Latency line */}
               <Line
                 type="monotone"
                 dataKey="latency"
-                stroke="#4DE0C1"
+                stroke="#00F0FF"
                 strokeWidth={2}
-                dot={{ r: 2, fill: "#4DE0C1" }}
-                activeDot={{ r: 5, fill: "#4DE0C1", stroke: "#0B1220", strokeWidth: 2 }}
+                dot={{ r: 2, fill: "#00F0FF" }}
+                activeDot={{ r: 5, fill: "#00F0FF", stroke: "#050811", strokeWidth: 2 }}
                 connectNulls={false}
               />
               {/* Failure points indicator line */}
               <Line
                 type="monotone"
                 dataKey="failedLatency"
-                stroke="#EF4444"
+                stroke="#FF2E93"
                 strokeWidth={0}
-                dot={{ r: 4, fill: "#EF4444", stroke: "#991B1B", strokeWidth: 1 }}
-                activeDot={{ r: 6, fill: "#EF4444" }}
+                dot={{ r: 4, fill: "#FF2E93", stroke: "#991B1B", strokeWidth: 1 }}
+                activeDot={{ r: 6, fill: "#FF2E93" }}
                 connectNulls={false}
               />
             </LineChart>
@@ -215,23 +215,23 @@ export function StabilityChart({ points, p95Latency }: StabilityChartProps) {
       <div className="mt-3 pt-3 border-t border-radar-border/70 flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono text-radar-subtle">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-radar-teal inline-block" />
-            HTTP Latency (ms)
+            <span className="w-2.5 h-2.5 rounded-full bg-radar-cyan inline-block shadow-[0_0_6px_#00F0FF]" />
+            HTTP Gecikmesi (ms)
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-red-500 inline-block" />
-            Failure / Timeout
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block shadow-[0_0_6px_#FF2E93]" />
+            Başarısızlık / Zaman Aşımı
           </span>
           {p95Latency && p95Latency > 0 ? (
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-0.5 bg-radar-blue inline-block" />
-              p95 Threshold ({p95Latency}ms)
+              <span className="w-3 h-0.5 bg-radar-cyan inline-block" />
+              P95 Eşiği ({p95Latency}ms)
             </span>
           ) : null}
         </div>
         <div className="flex items-center gap-1 text-slate-400">
           <AlertCircle className="w-3 h-3 text-radar-teal" />
-          <span>Real browser fetch timing</span>
+          <span>Gerçek tarayıcı fetch ölçümü</span>
         </div>
       </div>
     </div>

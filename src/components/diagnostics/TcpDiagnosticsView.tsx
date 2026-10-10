@@ -35,6 +35,13 @@ export function TcpDiagnosticsView() {
       const res = await probeTcpPort(hostInput.trim(), portInput);
       setResult(res);
 
+      const statusMap: Record<string, string> = {
+        open: "AÇIK",
+        closed: "KAPALI",
+        timeout: "ZAMAN AŞIMI",
+        forbidden: "YASAKLI",
+      };
+
       await saveHistoryItem({
         id: `tcp_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
         category: "tcp",
@@ -43,12 +50,12 @@ export function TcpDiagnosticsView() {
         endTime: res.timestamp,
         durationMs: res.durationMs,
         status: res.status === "open" ? "success" : res.status === "forbidden" ? "warning" : "error",
-        summary: `TCP Port ${res.port}: ${res.status.toUpperCase()} (${formatDuration(res.durationMs)})`,
+        summary: `TCP Port ${res.port}: ${statusMap[res.status] || res.status.toUpperCase()} (${formatDuration(res.durationMs)})`,
         details: { tcp: res },
         errorMessage: res.message,
       });
     } catch (err) {
-      console.error("TCP probe error:", err);
+      console.error("TCP probe hatası:", err);
     } finally {
       setIsLoading(false);
     }
@@ -60,39 +67,39 @@ export function TcpDiagnosticsView() {
         <CardHeader>
           <CardTitle>
             <Network className="w-4 h-4 text-radar-teal" />
-            TCP Port Connectivity & Handshake Probe
+            TCP Port Bağlantısı & El Sıkışma Sondası
           </CardTitle>
-          <Badge variant="cyan">Backend Handshake Layer</Badge>
+          <Badge variant="cyan">Arka Uç El Sıkışma Katmanı</Badge>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="p-3.5 rounded-lg bg-radar-elevated/40 border border-radar-border text-xs text-radar-muted space-y-1.5">
             <div className="flex items-center gap-2 text-slate-200 font-medium">
               <ShieldAlert className="w-4 h-4 text-radar-cyan shrink-0" />
-              <span>Browser Sandbox Architecture Notice</span>
+              <span>Tarayıcı Kum Havuzu (Sandbox) Mimari Bildirimi</span>
             </div>
             <p>
-              Standard Web Browser JavaScript in Safari, Chrome, and Firefox is fundamentally restricted from establishing arbitrary raw TCP sockets (<code className="text-radar-teal font-mono">new Socket()</code> is not a Web API).
+              Safari, Chrome ve Firefox gibi tarayıcılardaki standart JavaScript, doğrudan ham TCP soketleri açmaktan temel seviyede kısıtlanmıştır (<code className="text-radar-teal font-mono">new Socket()</code> bir Web API&apos;si değildir).
             </p>
             <p className="text-slate-300">
-              To provide legitimate Layer-4 TCP handshake diagnostics without fabricating numbers or confusing HTTP timing with TCP SYN/ACK, this probe executes via NetRadar&apos;s controlled backend Node.js socket agent with SSRF protection against RFC-1918 subnets.
+              Sayıları uydurmadan veya HTTP süresini TCP SYN/ACK ile karıştırmadan meşru Katman-4 TCP el sıkışma tanılaması sağlamak amacıyla, bu sonda NetRadar&apos;ın kontrollü Node.js soket aracısı ve RFC-1918 alt ağlarına karşı SSRF koruması eşliğinde yürütülür.
             </p>
           </div>
 
           {/* Form */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="sm:col-span-2 space-y-1.5">
-              <label className="text-xs font-mono text-radar-subtle block">Target Hostname or IP</label>
+              <label className="text-xs font-mono text-radar-subtle block">Hedef Hostname veya IP</label>
               <input
                 type="text"
                 value={hostInput}
                 onChange={(e) => setHostInput(e.target.value)}
-                placeholder="e.g. 1.1.1.1 or example.com"
+                placeholder="Örn: 1.1.1.1 veya ornek.com"
                 className="w-full bg-radar-bg border border-radar-border rounded-lg px-3.5 py-2.5 text-sm font-mono text-slate-100 placeholder:text-radar-subtle focus:outline-none focus:ring-1 focus:ring-radar-teal"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-mono text-radar-subtle block">Port</label>
+              <label className="text-xs font-mono text-radar-subtle block">Port (Bağlantı Noktası)</label>
               <input
                 type="number"
                 min={1}
@@ -106,7 +113,7 @@ export function TcpDiagnosticsView() {
 
           {/* Common Ports */}
           <div className="flex flex-wrap items-center gap-2 pt-1">
-            <span className="text-xs text-radar-subtle font-mono">Common Services:</span>
+            <span className="text-xs text-radar-subtle font-mono">Sık Kullanılan Servisler:</span>
             {COMMON_PORTS.map((item) => (
               <button
                 key={item.port}
@@ -129,7 +136,7 @@ export function TcpDiagnosticsView() {
               disabled={!hostInput.trim()}
               leftIcon={<RefreshCw className="w-4 h-4" />}
             >
-              Test TCP Handshake
+              TCP El Sıkışmasını Sına
             </Button>
           </div>
         </CardContent>
@@ -141,7 +148,7 @@ export function TcpDiagnosticsView() {
           <CardHeader>
             <CardTitle>
               <Network className="w-4 h-4 text-radar-teal" />
-              TCP Handshake Report: <span className="font-mono text-white">{result.host}:{result.port}</span>
+              TCP El Sıkışma Raporu: <span className="font-mono text-white">{result.host}:{result.port}</span>
             </CardTitle>
             <Badge
               variant={
@@ -152,13 +159,13 @@ export function TcpDiagnosticsView() {
                   : "rose"
               }
             >
-              PORT {result.status.toUpperCase()}
+              PORT {result.status === "open" ? "AÇIK" : result.status === "closed" ? "KAPALI" : result.status.toUpperCase()}
             </Badge>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
-                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Handshake Duration</span>
+                <span className="text-[11px] font-mono text-radar-subtle uppercase block">El Sıkışma Süresi</span>
                 <span className="text-lg font-bold font-mono text-white mt-0.5 block">
                   {formatDuration(result.durationMs)}
                 </span>
@@ -166,25 +173,25 @@ export function TcpDiagnosticsView() {
               </div>
 
               <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
-                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Socket State</span>
+                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Soket Durumu</span>
                 <span className="text-lg font-bold font-mono text-white mt-0.5 block uppercase">
-                  {result.status}
+                  {result.status === "open" ? "Açık" : result.status === "closed" ? "Kapalı" : result.status}
                 </span>
-                <span className="text-[10px] text-radar-muted">TCP Connection</span>
+                <span className="text-[10px] text-radar-muted">TCP Bağlantısı</span>
               </div>
 
               <div className="bg-radar-bg p-3 rounded-lg border border-radar-border col-span-2 sm:col-span-1">
-                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Agent Environment</span>
+                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Aracı Ortamı</span>
                 <span className="text-base font-bold font-mono text-white mt-0.5 block">
                   Node.js net.Socket
                 </span>
-                <span className="text-[10px] text-radar-muted">Backend Handshake</span>
+                <span className="text-[10px] text-radar-muted">Arka Uç El Sıkışması</span>
               </div>
             </div>
 
             <div className="p-3 rounded-lg bg-radar-bg border border-radar-border text-xs font-mono space-y-1">
               <span className="text-radar-subtle block font-sans text-[11px] uppercase">
-                Diagnostic Trace Message:
+                Tanılama İzleme İletisi:
               </span>
               <p className="text-slate-200">{result.message}</p>
             </div>

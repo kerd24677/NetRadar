@@ -17,11 +17,9 @@ export function StabilityEventLog({ points, p95Latency = 0 }: StabilityEventLogP
 
   const filteredPoints = useMemo(() => {
     return [...points].reverse().filter((p) => {
-      // Category filter
       if (filter === "errors" && p.status === "success") return false;
       if (filter === "slow" && (p.status !== "success" || p.durationMs <= p95Latency)) return false;
 
-      // Text search
       if (search.trim()) {
         const q = search.toLowerCase();
         const matchesTarget = p.target.toLowerCase().includes(q);
@@ -35,16 +33,16 @@ export function StabilityEventLog({ points, p95Latency = 0 }: StabilityEventLogP
   }, [points, filter, search, p95Latency]);
 
   return (
-    <div className="bg-radar-surface/90 border border-radar-border rounded-xl p-4 sm:p-5 shadow-lg flex flex-col">
+    <div className="bg-radar-surface/90 border border-radar-border rounded-xl p-4 sm:p-5 shadow-noc-card flex flex-col">
       {/* Header and Controls */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
         <div>
           <h3 className="text-sm font-semibold text-slate-100 flex items-center gap-2">
             <ListFilter className="w-4 h-4 text-radar-teal" />
-            Probe Event Log
+            Prob Olay Günlüğü
           </h3>
           <p className="text-xs text-radar-subtle mt-0.5">
-            Detailed chronological record of individual HTTP requests
+            Ayrıntılı kronolojik HTTP istek ve yanıt kayıtları
           </p>
         </div>
 
@@ -60,7 +58,7 @@ export function StabilityEventLog({ points, p95Latency = 0 }: StabilityEventLogP
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              All ({points.length})
+              Tümü ({points.length})
             </button>
             <button
               type="button"
@@ -71,7 +69,7 @@ export function StabilityEventLog({ points, p95Latency = 0 }: StabilityEventLogP
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              Errors ({points.filter((p) => p.status !== "success").length})
+              Hatalar ({points.filter((p) => p.status !== "success").length})
             </button>
             <button
               type="button"
@@ -82,7 +80,7 @@ export function StabilityEventLog({ points, p95Latency = 0 }: StabilityEventLogP
                   : "text-slate-400 hover:text-slate-200"
               }`}
             >
-              Slow &gt; p95
+              Yavaş &gt; P95
             </button>
           </div>
 
@@ -93,7 +91,7 @@ export function StabilityEventLog({ points, p95Latency = 0 }: StabilityEventLogP
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search..."
+              placeholder="Ara..."
               className="w-full bg-radar-bg border border-radar-border rounded-lg pl-8 pr-2.5 py-1 text-xs font-mono text-slate-200 placeholder-slate-500 focus:outline-none focus:border-radar-teal"
             />
           </div>
@@ -103,19 +101,19 @@ export function StabilityEventLog({ points, p95Latency = 0 }: StabilityEventLogP
       {/* Table / List */}
       {filteredPoints.length === 0 ? (
         <div className="py-8 text-center text-xs font-mono text-radar-subtle bg-radar-bg/40 border border-dashed border-radar-border rounded-lg">
-          No probe events match the current criteria.
+          Mevcut kriterlere uygun prob kaydı bulunamadı.
         </div>
       ) : (
         <div className="overflow-x-auto max-h-80 overflow-y-auto border border-radar-border/80 rounded-lg">
           <table className="w-full text-left text-xs font-mono">
             <thead className="bg-radar-bg/90 text-radar-subtle sticky top-0 border-b border-radar-border">
               <tr>
-                <th className="px-3 py-2">#Seq</th>
-                <th className="px-3 py-2">Timestamp</th>
-                <th className="px-3 py-2">Latency</th>
-                <th className="px-3 py-2">Status</th>
-                <th className="px-3 py-2">HTTP</th>
-                <th className="px-3 py-2">Details</th>
+                <th className="px-3 py-2">#Sıra</th>
+                <th className="px-3 py-2">Zaman</th>
+                <th className="px-3 py-2">Gecikme</th>
+                <th className="px-3 py-2">Durum</th>
+                <th className="px-3 py-2">HTTP Kodu</th>
+                <th className="px-3 py-2">Ayrıntılar</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-radar-border/50">
@@ -148,7 +146,7 @@ export function StabilityEventLog({ points, p95Latency = 0 }: StabilityEventLogP
                           {pt.durationMs} ms
                         </span>
                       ) : (
-                        <span className="text-red-400">Failed</span>
+                        <span className="text-red-400">Başarısız</span>
                       )}
                     </td>
                     <td className="px-3 py-2">
@@ -159,14 +157,14 @@ export function StabilityEventLog({ points, p95Latency = 0 }: StabilityEventLogP
                             : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
                         }`}
                       >
-                        {pt.status}
+                        {pt.status === "success" ? "BAŞARILI" : "HATA"}
                       </span>
                     </td>
                     <td className="px-3 py-2 text-slate-300">
                       {pt.httpStatus !== undefined && pt.httpStatus !== 0 ? pt.httpStatus : "—"}
                     </td>
                     <td className="px-3 py-2 text-radar-subtle truncate max-w-xs" title={pt.errorDetails}>
-                      {pt.errorDetails || "HTTP 200 OK / Completed"}
+                      {pt.errorDetails || "HTTP 200 OK / Yanıt Alındı"}
                     </td>
                   </tr>
                 );

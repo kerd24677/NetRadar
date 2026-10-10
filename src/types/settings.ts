@@ -11,17 +11,17 @@ export const DOH_RESOLVERS = [
   {
     name: "Cloudflare (1.1.1.1)",
     url: "https://cloudflare-dns.com/dns-query",
-    description: "Cloudflare 1.1.1.1 DNS over HTTPS JSON API",
+    description: "Cloudflare 1.1.1.1 HTTPS üzerinden DNS JSON API'si",
   },
   {
     name: "Google (8.8.8.8)",
     url: "https://dns.google/resolve",
-    description: "Google Public DNS over HTTPS REST API",
+    description: "Google Genel DNS HTTPS üzerinden REST API'si",
   },
   {
     name: "Quad9 (9.9.9.9)",
     url: "https://dns.quad9.net/dns-query",
-    description: "Quad9 Threat-blocking DNS over HTTPS",
+    description: "Quad9 Tehdit Engelleyici HTTPS üzerinden DNS",
   },
 ];
 

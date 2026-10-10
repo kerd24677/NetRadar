@@ -11,7 +11,6 @@ interface LatencyChartCardProps {
 }
 
 export function LatencyChartCard({ historyItems }: LatencyChartCardProps) {
-  // Filter items that have duration measurements and sort chronologically
   const chartData = historyItems
     .filter((item) => item.durationMs > 0)
     .slice(0, 15)
@@ -30,10 +29,10 @@ export function LatencyChartCard({ historyItems }: LatencyChartCardProps) {
       <CardHeader>
         <CardTitle>
           <BarChart3 className="w-4 h-4 text-radar-teal" />
-          Response Latency Trend (ms)
+          Yanıt Gecikmesi Eğilimi (ms)
         </CardTitle>
         <span className="text-xs font-mono text-radar-subtle">
-          {chartData.length > 0 ? `${chartData.length} Recent Tests` : "Real Data Only"}
+          {chartData.length > 0 ? `${chartData.length} Son Test` : "Yalnızca Gerçek Veri"}
         </span>
       </CardHeader>
       <CardContent>
@@ -41,10 +40,10 @@ export function LatencyChartCard({ historyItems }: LatencyChartCardProps) {
           <div className="h-48 sm:h-56 flex flex-col items-center justify-center text-center p-4 rounded-lg bg-radar-bg border border-dashed border-radar-border">
             <BarChart3 className="w-8 h-8 text-radar-subtle mb-2" />
             <p className="text-xs sm:text-sm text-slate-300 font-medium">
-              No genuine measurements recorded yet
+              Henüz kaydedilmiş gerçek ölçüm yok
             </p>
             <p className="text-xs text-radar-muted max-w-xs mt-1">
-              NetRadar never fabricates or simulates telemetry data. Run a diagnostic probe to begin graphing real response times.
+              NetRadar asla sahte veya simüle veri üretmez. Gerçek yanıt sürelerini izlemek için bir tanılama testi çalıştırın.
             </p>
           </div>
         ) : (
@@ -74,9 +73,9 @@ export function LatencyChartCard({ historyItems }: LatencyChartCardProps) {
                         <div className="bg-radar-surface border border-radar-border p-2.5 rounded-lg shadow-xl text-xs font-mono space-y-1">
                           <p className="text-radar-teal font-semibold">{data.fullTarget}</p>
                           <p className="text-slate-300">
-                            Latency: <strong className="text-white">{data.latency} ms</strong>
+                            Gecikme: <strong className="text-white">{data.latency} ms</strong>
                           </p>
-                          <p className="text-radar-muted">Type: {data.category} | {data.time}</p>
+                          <p className="text-radar-muted">Tür: {data.category} | {data.time}</p>
                         </div>
                       );
                     }
@@ -86,10 +85,10 @@ export function LatencyChartCard({ historyItems }: LatencyChartCardProps) {
                 <Line
                   type="monotone"
                   dataKey="latency"
-                  stroke="#4DE0C1"
+                  stroke="#00F0FF"
                   strokeWidth={2}
-                  dot={{ r: 3, fill: "#4DE0C1" }}
-                  activeDot={{ r: 5, fill: "#6FFFD9" }}
+                  dot={{ r: 3, fill: "#00F0FF" }}
+                  activeDot={{ r: 5, fill: "#4DE0C1" }}
                 />
               </LineChart>
             </ResponsiveContainer>

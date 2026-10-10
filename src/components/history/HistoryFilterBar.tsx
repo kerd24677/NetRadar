@@ -18,7 +18,7 @@ export function HistoryFilterBar({ filter, onChange }: HistoryFilterBarProps) {
           <Search className="w-4 h-4 text-radar-subtle absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Search target, summary, or ID..."
+            placeholder="Hedef, özet veya kimlik ara..."
             value={filter.searchQuery || ""}
             onChange={(e) => onChange({ ...filter, searchQuery: e.target.value })}
             className="w-full bg-radar-bg border border-radar-border rounded-lg pl-9 pr-3 py-2 text-xs sm:text-sm font-mono text-slate-100 placeholder:text-radar-subtle focus:outline-none focus:ring-1 focus:ring-radar-teal"
@@ -34,11 +34,11 @@ export function HistoryFilterBar({ filter, onChange }: HistoryFilterBarProps) {
             }
             className="w-full bg-radar-bg border border-radar-border rounded-lg px-3 py-2 text-xs sm:text-sm font-mono text-slate-100 focus:outline-none focus:ring-1 focus:ring-radar-teal"
           >
-            <option value="all">All Categories</option>
-            <option value="http">HTTP Probes</option>
-            <option value="dns">DNS Queries</option>
-            <option value="speed">Throughput</option>
-            <option value="tcp">TCP Ports</option>
+            <option value="all">Tüm Kategoriler</option>
+            <option value="http">HTTP Probları</option>
+            <option value="dns">DNS Sorguları</option>
+            <option value="speed">Bant Genişliği</option>
+            <option value="tcp">TCP Portları</option>
           </select>
         </div>
 
@@ -54,10 +54,10 @@ export function HistoryFilterBar({ filter, onChange }: HistoryFilterBarProps) {
             }
             className="w-full bg-radar-bg border border-radar-border rounded-lg px-3 py-2 text-xs sm:text-sm font-mono text-slate-100 focus:outline-none focus:ring-1 focus:ring-radar-teal"
           >
-            <option value="all">All Statuses</option>
-            <option value="success">Success</option>
-            <option value="warning">Warning / Opaque</option>
-            <option value="error">Error</option>
+            <option value="all">Tüm Durumlar</option>
+            <option value="success">Başarılı</option>
+            <option value="warning">Uyarı / Opaque</option>
+            <option value="error">Hata</option>
           </select>
         </div>
 
@@ -73,9 +73,9 @@ export function HistoryFilterBar({ filter, onChange }: HistoryFilterBarProps) {
             }
             className="w-full bg-radar-bg border border-radar-border rounded-lg px-3 py-2 text-xs sm:text-sm font-mono text-slate-100 focus:outline-none focus:ring-1 focus:ring-radar-teal"
           >
-            <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
-            <option value="duration">Longest Duration</option>
+            <option value="newest">En Yeni Kayıt</option>
+            <option value="oldest">En Eski Kayıt</option>
+            <option value="duration">En Uzun Süre</option>
           </select>
         </div>
       </div>

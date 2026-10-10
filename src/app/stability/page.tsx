@@ -15,7 +15,8 @@ import { downloadCsvFile } from "@/lib/exports/csvExport";
 import { StabilityControls } from "@/components/stability/StabilityControls";
 import { StabilityKpis } from "@/components/stability/StabilityKpis";
 import { StabilityChart } from "@/components/stability/StabilityChart";
-import { OutageTimeline } from "@/components/stability/OutageTimeline";
+import { LatencyHeatmapView } from "@/components/stability/LatencyHeatmapView";
+import { EnhancedTimelineView } from "@/components/stability/EnhancedTimelineView";
 import { StabilityEventLog } from "@/components/stability/StabilityEventLog";
 
 import { Activity, Info, History, Trash2, ChevronRight } from "lucide-react";
@@ -67,7 +68,7 @@ export default function StabilityPage() {
       const items = await getAllStabilitySessions();
       setPastSessions(items);
     } catch (err) {
-      console.warn("Error loading past stability sessions:", err);
+      console.warn("Geçmiş kararlılık oturumları yüklenirken hata:", err);
     }
   }, []);
 
@@ -111,7 +112,7 @@ export default function StabilityPage() {
         await saveStabilitySession(finishedSession);
         await loadPastSessions();
       } catch (err) {
-        console.warn("Failed to persist stability session:", err);
+        console.warn("Kararlılık oturumu kaydedilemedi:", err);
       }
     }
   }, [loadPastSessions]);
@@ -123,7 +124,6 @@ export default function StabilityPage() {
       const seq = seqRef.current++;
       const timestamp = Date.now();
 
-      // Check if browser is offline
       if (typeof navigator !== "undefined" && !navigator.onLine) {
         const offlinePt: StabilityProbePoint = {
           id: `probe_${timestamp}_${seq}`,
@@ -132,7 +132,7 @@ export default function StabilityPage() {
           target: currentTarget,
           durationMs: 0,
           status: "offline",
-          errorDetails: "Device has no active internet connection (navigator.onLine = false)",
+          errorDetails: "Cihazın internet bağlantısı yok (navigator.onLine = false)",
         };
         const next = [...pointsRef.current, offlinePt];
         updatePointsAndStats(next);
@@ -174,7 +174,7 @@ export default function StabilityPage() {
           target: currentTarget,
           durationMs: 0,
           status: "error",
-          errorDetails: errMessage || "Fetch failed",
+          errorDetails: errMessage || "İstek başarısız oldu",
         };
         const next = [...pointsRef.current, pt];
         updatePointsAndStats(next);
@@ -187,7 +187,6 @@ export default function StabilityPage() {
   const startTest = useCallback(() => {
     if (!target.trim()) return;
 
-    // Reset sequence and active points
     seqRef.current = 1;
     pointsRef.current = [];
     setPoints([]);
@@ -223,7 +222,6 @@ export default function StabilityPage() {
 
         if (isStoppedRef.current) break;
 
-        // Delay between consecutive completed probes
         await new Promise<void>((resolve) => {
           timerRef.current = setTimeout(resolve, intervalMs);
         });
@@ -269,7 +267,7 @@ export default function StabilityPage() {
           stats,
         };
     const csv = generateStabilityCsv(sessionToExport);
-    downloadCsvFile(csv, `netradar-stability-${Date.now()}.csv`);
+    downloadCsvFile(csv, `netradar-kararlilik-${Date.now()}.csv`);
   }, [activeSessionId, target, intervalMs, points, stats]);
 
   const handleExportJson = useCallback(() => {
@@ -284,7 +282,7 @@ export default function StabilityPage() {
           points,
           stats,
         };
-    downloadJsonFile(sessionToExport, `netradar-stability-${Date.now()}.json`);
+    downloadJsonFile(sessionToExport, `netradar-kararlilik-${Date.now()}.json`);
   }, [activeSessionId, target, intervalMs, points, stats]);
 
   // Load a past session from History
@@ -315,20 +313,20 @@ export default function StabilityPage() {
         <div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-100 flex items-center gap-2.5">
             <Activity className="w-6 h-6 text-radar-teal" />
-            Connection Stability Analytics
+            Bağlantı Kararlılık Analitiği ve Dalgalanma İzleyici
           </h1>
           <p className="text-xs sm:text-sm text-radar-subtle mt-0.5">
-            Continuous HTTP jitter variance, tail latency percentiles, and outage recovery tracking
+            Kesintisiz RFC 3550 seğirme varyansı, P95 kuyruk gecikmesi ve kesinti toparlanma takibi
           </p>
         </div>
 
         <Button
           onClick={() => setIsHistoryOpen(true)}
           variant="outline"
-          className="border-radar-border hover:bg-radar-surface text-slate-300 text-xs flex items-center gap-1.5"
+          className="border-radar-border hover:bg-radar-surface text-slate-300 text-xs flex items-center gap-1.5 font-mono"
         >
           <History className="w-3.5 h-3.5 text-radar-teal" />
-          Saved Sessions ({pastSessions.length})
+          Kayıtlı Oturumlar ({pastSessions.length})
         </Button>
       </div>
 
@@ -336,9 +334,9 @@ export default function StabilityPage() {
       <div className="bg-radar-surface/60 border border-radar-border/80 rounded-xl p-3 sm:p-4 flex items-start gap-3 text-xs font-mono text-radar-subtle">
         <Info className="w-4 h-4 text-radar-teal shrink-0 mt-0.5" />
         <div>
-          <span className="font-semibold text-slate-300">Technical Note: </span>
-          NetRadar conducts live HTTP/HTTPS probes with high-resolution{" "}
-          <code className="text-radar-teal font-semibold">performance.now()</code> timers. Browser security prevents raw ICMP ping generation, so the Failure Ratio represents true application-layer HTTP roundtrip failures rather than ICMP packet drops.
+          <span className="font-semibold text-slate-300">Teknik Doğruluk Notu: </span>
+          NetRadar, yüksek hassasiyetli{" "}
+          <code className="text-radar-teal font-semibold">performance.now()</code> zamanlayıcıları ile gerçek HTTP/HTTPS probları yürütür. Tarayıcı güvenlik politikası ham ICMP ping paketlerini engellediğinden, Başarısızlık Oranı ham ICMP paket kaybı değil, gerçek uygulama katmanı HTTP gidiş-dönüş başarısızlıklarını temsil eder.
         </div>
       </div>
 
@@ -365,26 +363,33 @@ export default function StabilityPage() {
       {/* 3. Time Series Chart */}
       <StabilityChart points={points} p95Latency={stats.p95Latency} />
 
-      {/* 4. Outage Timeline & Details */}
-      <OutageTimeline outages={stats.outages} totalSent={stats.totalSent} />
+      {/* 4. Latency & Failure Heatmap View (Module 3) */}
+      <LatencyHeatmapView points={points} />
 
-      {/* 5. Event Log */}
+      {/* 5. Enhanced Timeline View (Module 5) */}
+      <EnhancedTimelineView
+        outages={stats.outages}
+        points={points}
+        totalSent={stats.totalSent}
+      />
+
+      {/* 6. Event Log */}
       <StabilityEventLog points={points} p95Latency={stats.p95Latency} />
 
       {/* History Modal */}
       <Modal
         isOpen={isHistoryOpen}
         onClose={() => setIsHistoryOpen(false)}
-        title="Saved Stability Sessions"
+        title="Kayıtlı Kararlılık Oturumları"
       >
         <div className="space-y-3">
           <p className="text-xs text-radar-subtle">
-            All continuous stability runs are indexed locally inside browser IndexedDB.
+            Tüm sürekli kararlılık testleri doğrudan tarayıcınızın yerel IndexedDB deposunda saklanır.
           </p>
 
           {pastSessions.length === 0 ? (
             <div className="py-8 text-center text-xs font-mono text-radar-subtle bg-radar-bg rounded-lg border border-dashed border-radar-border">
-              No saved stability sessions found.
+              Kayıtlı kararlılık oturumu bulunamadı.
             </div>
           ) : (
             <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
@@ -406,15 +411,15 @@ export default function StabilityPage() {
                       </span>
                     </div>
                     <div className="flex items-center gap-3 text-[11px] text-radar-subtle mt-1">
-                      <span>Probes: {s.points.length}</span>
-                      <span>Mean: {s.stats?.meanLatency || 0}ms</span>
-                      <span>p95: {s.stats?.p95Latency || 0}ms</span>
+                      <span>Problar: {s.points.length}</span>
+                      <span>Ort: {s.stats?.meanLatency || 0}ms</span>
+                      <span>P95: {s.stats?.p95Latency || 0}ms</span>
                       <span
                         className={
                           s.stats?.failureRatio > 0 ? "text-amber-400" : "text-emerald-400"
                         }
                       >
-                        Fail: {s.stats?.failureRatio || 0}%
+                        Hata: %{s.stats?.failureRatio || 0}
                       </span>
                     </div>
                   </div>
@@ -424,7 +429,7 @@ export default function StabilityPage() {
                       type="button"
                       onClick={(e) => handleDeleteSession(s.id, e)}
                       className="p-1.5 text-slate-500 hover:text-red-400 rounded transition-colors"
-                      title="Delete session"
+                      title="Oturumu Sil"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

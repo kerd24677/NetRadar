@@ -25,6 +25,8 @@ export function calculateHaversineDistance(
   return Math.round(R * c);
 }
 
+export const calculateDistanceMeters = calculateHaversineDistance;
+
 /**
  * Finds and ranks cellular towers by straight-line distance from user GPS position.
  */

@@ -5,16 +5,17 @@ export interface SignalRating {
   textClass: string;
   label: string;
   quality: "Excellent" | "Good" | "Fair" | "Poor" | "Critical" | "Unknown";
+  qualityTr: "Mükemmel" | "İyi" | "Orta" | "Zayıf" | "Kritik" | "Belirtilmemiş";
   bars: number;
 }
 
 /**
- * Maps Wi-Fi RSSI (dBm) to industry-standard RF color coding and quality indicators.
- * - Green: > -50 dBm
- * - Light green: -50 to -65 dBm
- * - Amber: -65 to -75 dBm
- * - Orange: -75 to -85 dBm
- * - Red: < -85 dBm
+ * Wi-Fi RSSI (dBm) değerini endüstri standardı RF renklerine ve Türkçe etiketlerine dönüştürür.
+ * - Neon Yeşil/Zümrüt: > -50 dBm (Mükemmel)
+ * - Neon Camgöbeği/Turkuaz: -50 ila -65 dBm (İyi)
+ * - Neon Amber/Sarı: -65 ila -75 dBm (Orta)
+ * - Neon Turuncu: -75 ila -85 dBm (Zayıf)
+ * - Neon Kırmızı/Magenta: < -85 dBm (Kritik)
  */
 export function getSignalRating(rssi?: number): SignalRating {
   if (rssi === undefined || rssi === null) {
@@ -23,8 +24,9 @@ export function getSignalRating(rssi?: number): SignalRating {
       borderClass: "border-slate-500",
       bgClass: "bg-slate-500",
       textClass: "text-slate-400",
-      label: "No RSSI",
+      label: "Belirtilmemiş",
       quality: "Unknown",
+      qualityTr: "Belirtilmemiş",
       bars: 0,
     };
   }
@@ -35,20 +37,22 @@ export function getSignalRating(rssi?: number): SignalRating {
       borderClass: "border-emerald-500",
       bgClass: "bg-emerald-500",
       textClass: "text-emerald-400",
-      label: "Excellent",
+      label: "Mükemmel",
       quality: "Excellent",
+      qualityTr: "Mükemmel",
       bars: 5,
     };
   }
 
   if (rssi >= -65) {
     return {
-      color: "#34D399",
-      borderClass: "border-emerald-400",
-      bgClass: "bg-emerald-400",
-      textClass: "text-emerald-300",
-      label: "Good",
+      color: "#00F0FF",
+      borderClass: "border-cyan-400",
+      bgClass: "bg-cyan-500",
+      textClass: "text-cyan-300",
+      label: "İyi",
       quality: "Good",
+      qualityTr: "İyi",
       bars: 4,
     };
   }
@@ -59,8 +63,9 @@ export function getSignalRating(rssi?: number): SignalRating {
       borderClass: "border-amber-400",
       bgClass: "bg-amber-400",
       textClass: "text-amber-300",
-      label: "Fair",
+      label: "Orta",
       quality: "Fair",
+      qualityTr: "Orta",
       bars: 3,
     };
   }
@@ -71,19 +76,21 @@ export function getSignalRating(rssi?: number): SignalRating {
       borderClass: "border-orange-500",
       bgClass: "bg-orange-500",
       textClass: "text-orange-400",
-      label: "Poor",
+      label: "Zayıf",
       quality: "Poor",
+      qualityTr: "Zayıf",
       bars: 2,
     };
   }
 
   return {
-    color: "#EF4444",
-    borderClass: "border-red-500",
-    bgClass: "bg-red-500",
-    textClass: "text-red-400",
-    label: "Critical",
+    color: "#FF2E93",
+    borderClass: "border-rose-500",
+    bgClass: "bg-rose-500",
+    textClass: "text-rose-400",
+    label: "Kritik",
     quality: "Critical",
+    qualityTr: "Kritik",
     bars: 1,
   };
 }

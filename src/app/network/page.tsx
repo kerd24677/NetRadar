@@ -14,10 +14,10 @@ export default function NetworkPage() {
       <div>
         <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
           <Network className="w-5 h-5 text-radar-teal" />
-          Network & Platform Telemetry
+          Ağ ve Platform Telemetrisi
         </h1>
         <p className="text-xs sm:text-sm text-radar-muted mt-1">
-          Detailed inspection of genuine client network interfaces, public WAN routes, and browser execution capabilities.
+          İstemci ağ arayüzlerinin, genel WAN rotalarının ve tarayıcı çalıştırma ortamı yeteneklerinin ayrıntılı denetimi.
         </p>
       </div>
 

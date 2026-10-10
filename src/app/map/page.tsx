@@ -17,6 +17,8 @@ import { PointDetailBottomSheet } from "@/components/map/PointDetailBottomSheet"
 import { WifiInspectorList } from "@/components/map/WifiInspectorList";
 import { TowerLayerCard } from "@/components/map/TowerLayerCard";
 import { FieldSurveyExportImport } from "@/components/map/FieldSurveyExportImport";
+import { FieldMap3DView } from "@/components/map/FieldMap3DView";
+import { MapLayerState } from "@/components/map/MapLayerControl";
 
 import {
   MapPin,
@@ -24,6 +26,7 @@ import {
   Plus,
   Info,
   List,
+  Compass,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
@@ -33,10 +36,10 @@ const DynamicFieldMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="w-full h-[420px] sm:h-[500px] lg:h-[560px] rounded-xl bg-radar-bg border border-radar-border flex flex-col items-center justify-center gap-2">
+      <div className="w-full h-[430px] sm:h-[500px] lg:h-[560px] rounded-xl bg-radar-bg border border-radar-border flex flex-col items-center justify-center gap-2">
         <div className="w-3 h-3 rounded-full bg-radar-teal animate-ping" />
         <span className="text-xs font-mono text-radar-subtle">
-          Loading OpenStreetMap NOC Survey Tiles...
+          OpenStreetMap NOC Saha Haritası Yükleniyor...
         </span>
       </div>
     ),
@@ -53,8 +56,18 @@ export default function FieldMapPage() {
   } | null>(null);
   const [isTrackingGps, setIsTrackingGps] = useState(false);
 
-  // View mode switcher: "map" | "inspector"
-  const [activeTab, setActiveTab] = useState<"map" | "inspector">("map");
+  // View mode switcher: "map" | "3d" | "inspector"
+  const [activeTab, setActiveTab] = useState<"map" | "3d" | "inspector">("map");
+
+  // Map layer controls
+  const [layers, setLayers] = useState<MapLayerState>({
+    surveyPoints: true,
+    signalDensity: true,
+    latencyView: false,
+    cellularTowers: true,
+    walkPath: true,
+    coordGrid: true,
+  });
 
   // Modal controls
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -72,7 +85,7 @@ export default function FieldMapPage() {
       const stored = await getAllSurveyPoints();
       setPoints(stored);
     } catch (err) {
-      console.warn("Failed to load survey points:", err);
+      console.warn("Saha ölçüm noktaları yüklenemedi:", err);
     }
   }, []);
 
@@ -98,7 +111,6 @@ export default function FieldMapPage() {
     if (typeof navigator !== "undefined" && navigator.geolocation) {
       setIsTrackingGps(true);
 
-      // Fetch immediate initial position
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           setUserLocation({
@@ -108,12 +120,11 @@ export default function FieldMapPage() {
           });
         },
         (err) => {
-          console.warn("Initial GPS acquisition failed:", err);
+          console.warn("İlk GPS konumu alınamadı:", err);
         },
         { enableHighAccuracy: true, timeout: 8000 }
       );
 
-      // Start continuous surveyor position watch
       const id = navigator.geolocation.watchPosition(
         (pos) => {
           setUserLocation({
@@ -124,62 +135,55 @@ export default function FieldMapPage() {
         },
         (err) => {
           if (err.code === 1) {
-            alert("Location permission was denied. Please allow location access in your device settings.");
+            alert("Konum izni reddedildi. Lütfen cihaz ayarlarınızdan konum iznini etkinleştirin.");
             stopGpsTracking();
           } else {
-            console.warn("GPS watch position warning:", err.message);
+            console.warn("GPS izleme uyarısı:", err.message);
           }
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 2000 }
       );
       watchIdRef.current = id;
     } else {
-      alert("Geolocation is not supported by this browser.");
+      alert("Bu tarayıcıda coğrafi konum servisi desteklenmiyor.");
     }
   };
 
-  // Clean up GPS watch on unmount
   useEffect(() => {
     return () => {
       stopGpsTracking();
     };
   }, [stopGpsTracking]);
 
-  // Add survey point handler
   const handleSavePoint = async (newPoint: WifiSurveyPoint) => {
     await saveSurveyPoint(newPoint);
     await loadPoints();
     setClickedMapCoords(null);
   };
 
-  // Update existing survey point (e.g. spot latency re-test)
   const handleUpdatePoint = async (updated: WifiSurveyPoint) => {
     await saveSurveyPoint(updated);
     setSelectedPoint(updated);
     await loadPoints();
   };
 
-  // Delete point handler
   const handleDeletePoint = async (id: string) => {
     await deleteSurveyPoint(id);
     await loadPoints();
     setSelectedPoint(null);
   };
 
-  // Clear all points handler
   const handleClearAll = async () => {
     await clearAllSurveyPoints();
     setPoints([]);
     setSelectedPoint(null);
   };
 
-  // Bulk import handler
   const handleBulkImport = async (imported: WifiSurveyPoint[]) => {
     await saveSurveyPointsBulk(imported);
     await loadPoints();
   };
 
-  // Map click handler (proposes adding a survey point at clicked position)
   const handleMapClick = (lat: number, lng: number) => {
     setClickedMapCoords({ lat, lng });
     setIsAddModalOpen(true);
@@ -192,10 +196,10 @@ export default function FieldMapPage() {
         <div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-100 flex items-center gap-2.5">
             <MapPin className="w-6 h-6 text-radar-teal" />
-            Wi-Fi Signal &amp; Field Coverage Map
+            Wi-Fi Sinyal ve Saha Kapsama Haritası
           </h1>
           <p className="text-xs sm:text-sm text-radar-subtle mt-0.5">
-            GPS walk-path survey, -dBm RF signal heat mapping, and cellular infrastructure proximity
+            GPS yürüyüş güzergâhı, sinyal yoğunluk alanı, 3D izometrik perspektif ve baz istasyonu yakınlığı
           </p>
         </div>
 
@@ -207,12 +211,12 @@ export default function FieldMapPage() {
             variant="outline"
             className={`text-xs px-3 py-2 flex items-center gap-1.5 font-mono ${
               isTrackingGps
-                ? "border-radar-teal text-radar-teal bg-radar-teal/10"
+                ? "border-radar-teal text-radar-teal bg-radar-teal/10 shadow-noc-glow"
                 : "border-radar-border text-slate-300 hover:text-slate-100"
             }`}
           >
             <Navigation className={`w-3.5 h-3.5 ${isTrackingGps ? "animate-spin" : ""}`} />
-            {isTrackingGps ? "GPS Active" : "Track GPS"}
+            {isTrackingGps ? "GPS Aktif" : "GPS Takibi Başlat"}
           </Button>
 
           {/* Add Survey Point */}
@@ -222,10 +226,10 @@ export default function FieldMapPage() {
               setClickedMapCoords(null);
               setIsAddModalOpen(true);
             }}
-            className="bg-radar-teal hover:bg-radar-teal/90 text-slate-950 font-semibold text-xs px-3.5 py-2 flex items-center gap-1.5"
+            className="bg-radar-teal hover:bg-radar-teal/90 text-slate-950 font-semibold text-xs px-3.5 py-2 flex items-center gap-1.5 shadow-noc-glow"
           >
             <Plus className="w-4 h-4" />
-            Add Survey Point
+            Ölçüm Noktası Ekle
           </Button>
         </div>
       </div>
@@ -234,12 +238,12 @@ export default function FieldMapPage() {
       <div className="bg-radar-surface/60 border border-radar-border/80 rounded-xl p-3 sm:p-4 flex items-start gap-3 text-xs font-mono text-radar-subtle">
         <Info className="w-4 h-4 text-radar-teal shrink-0 mt-0.5" />
         <div>
-          <span className="font-semibold text-slate-300">Browser Capability Boundary: </span>
-          iOS Safari and modern browsers do not permit raw Wi-Fi chip scanning (BSSID/RSSI beacon discovery) due to operating system privacy controls. NetRadar provides manual RF field logging, real-time GPS geotagging, on-site HTTP latency testing, and data import from external Wi-Fi analyzer tools (NetSpot, Wi-Fi Analyzer).
+          <span className="font-semibold text-slate-300">Tarayıcı Güvenlik Sınırı Bildirimi: </span>
+          iOS Safari ve modern tarayıcılar işletim sistemi gizlilik politikası gereği doğrudan ham Wi-Fi çipine (çevredeki BSSID/RSSI işaretçileri) erişemez. NetRadar, saha teknisyeninin manuel RF kayıtlarını, canlı GPS etiketlemesini ve harici analiz cihazlarından içe aktarılan verileri kullanır.
         </div>
       </div>
 
-      {/* View Switcher Tabs: Coverage Map vs Wi-Fi Inspector */}
+      {/* View Switcher Tabs: 2D Harita vs 3D İzometrik vs Wi-Fi Kataloğu */}
       <div className="flex items-center gap-1 bg-radar-surface/90 p-1 rounded-xl border border-radar-border w-fit text-xs font-mono">
         <button
           type="button"
@@ -251,7 +255,19 @@ export default function FieldMapPage() {
           }`}
         >
           <MapPin className="w-3.5 h-3.5" />
-          Coverage Map ({points.length} Points)
+          2D Kapsama Haritası ({points.length} Nokta)
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("3d")}
+          className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg transition-all ${
+            activeTab === "3d"
+              ? "bg-radar-teal/20 text-radar-teal font-semibold shadow-sm"
+              : "text-slate-400 hover:text-slate-200"
+          }`}
+        >
+          <Compass className="w-3.5 h-3.5" />
+          3D İzometrik Saha &amp; Kuleler
         </button>
         <button
           type="button"
@@ -263,14 +279,14 @@ export default function FieldMapPage() {
           }`}
         >
           <List className="w-3.5 h-3.5" />
-          Wi-Fi Inspector Catalog
+          Wi-Fi Katalog Denetçisi
         </button>
       </div>
 
       {/* Main Content Area */}
       {activeTab === "map" ? (
         <div className="space-y-4">
-          {/* Leaflet Field Map Container */}
+          {/* Leaflet Field Map Container with Live Heatmap and Switchboard */}
           <DynamicFieldMap
             points={points}
             selectedPoint={selectedPoint}
@@ -279,6 +295,8 @@ export default function FieldMapPage() {
             showTowers={showTowers}
             towers={SAMPLE_PUBLIC_TOWERS}
             onMapClick={handleMapClick}
+            layers={layers}
+            onLayersChange={setLayers}
           />
 
           {/* Cellular Tower Proximity Layer */}
@@ -289,9 +307,27 @@ export default function FieldMapPage() {
             towers={SAMPLE_PUBLIC_TOWERS}
           />
         </div>
+      ) : activeTab === "3d" ? (
+        <div className="space-y-4">
+          {/* 3D Isometric View (Module 4) */}
+          <FieldMap3DView
+            points={points}
+            towers={SAMPLE_PUBLIC_TOWERS}
+            selectedPoint={selectedPoint}
+            onSelectPoint={setSelectedPoint}
+            showTowers={showTowers || layers.cellularTowers}
+          />
+
+          <TowerLayerCard
+            showTowers={showTowers}
+            onToggleTowers={() => setShowTowers((prev) => !prev)}
+            userCoords={userLocation || (points[0] ? { lat: points[0].lat, lng: points[0].lng } : null)}
+            towers={SAMPLE_PUBLIC_TOWERS}
+          />
+        </div>
       ) : (
         <div className="space-y-4">
-          {/* Wi-Fi Inspector View (NetSpot-style) */}
+          {/* Wi-Fi Inspector View */}
           <WifiInspectorList points={points} onSelectPoint={setSelectedPoint} />
         </div>
       )}

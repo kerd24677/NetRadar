@@ -54,20 +54,21 @@ export function ThroughputDiagnosticsView() {
       setLastResult(res);
 
       if (res.status === "success") {
+        const dirLabel = res.direction === "download" ? "İndirme" : "Yükleme";
         await saveHistoryItem({
           id: `speed_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
           category: "speed",
-          target: `${res.direction.toUpperCase()} (${formatBytes(res.bytesTransferred)})`,
+          target: `${dirLabel.toUpperCase()} (${formatBytes(res.bytesTransferred)})`,
           startTime: res.timestamp - Math.round(res.durationMs),
           endTime: res.timestamp,
           durationMs: res.durationMs,
           status: "success",
-          summary: `${formatSpeed(res.mbps)} (${res.direction}) over ${formatDuration(res.durationMs)}`,
+          summary: `${formatSpeed(res.mbps)} (${dirLabel}) / ${formatDuration(res.durationMs)}`,
           details: { speed: res },
         });
       }
     } catch (err) {
-      console.error("Speed test error:", err);
+      console.error("Speed test hatası:", err);
     } finally {
       setIsRunning(false);
       abortControllerRef.current = null;
@@ -86,30 +87,30 @@ export function ThroughputDiagnosticsView() {
         <CardHeader>
           <CardTitle>
             <Gauge className="w-4 h-4 text-radar-teal" />
-            Controlled Throughput Measurement
+            Kontrollü Veri Akış Hızı (Throughput) Ölçümü
           </CardTitle>
-          <Badge variant="teal">Real Payload Transfer</Badge>
+          <Badge variant="teal">Gerçek Veri Yükü Transferi</Badge>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="p-3.5 rounded-lg bg-radar-elevated/40 border border-radar-border text-xs text-radar-muted space-y-1.5">
             <div className="flex items-center gap-2 text-slate-200 font-medium">
               <Info className="w-4 h-4 text-radar-cyan shrink-0" />
-              <span>Diagnostic Integrity Notice</span>
+              <span>Tanılama Dürüstlüğü Bildirimi</span>
             </div>
             <p>
-              NetRadar performs genuine binary streaming tests against controlled endpoints (
+              NetRadar, kontrollü API uç noktalarına karşı (
               <code className="text-radar-teal font-mono">/api/speed/download</code> &{" "}
-              <code className="text-radar-teal font-mono">/api/speed/upload</code>). It never animates a fake speedometer or invents numbers.
+              <code className="text-radar-teal font-mono">/api/speed/upload</code>) gerçek ikili veri akışı testleri gerçekleştirir. Asla sahte bir hız göstergesi canlandırmaz veya yapay sayılar üretmez.
             </p>
             <p className="text-[11px] text-radar-subtle">
-              Measurements reflect actual end-to-end throughput between this client and the host deployment server, constrained by network latency, TCP windowing, and server compute.
+              Ölçümler, ağ gecikmesi, TCP pencereleme ve sunucu işlem gücü kısıtları altında bu istemci ile ana dağıtım sunucusu arasındaki gerçek uçtan uca veri hızını yansıtır.
             </p>
           </div>
 
           {/* Configuration */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-mono text-radar-subtle block">Test Direction</label>
+              <label className="text-xs font-mono text-radar-subtle block">Test Yönü</label>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
@@ -121,7 +122,7 @@ export function ThroughputDiagnosticsView() {
                   }`}
                 >
                   <ArrowDownCircle className="w-4 h-4" />
-                  Download
+                  İndirme (Download)
                 </button>
 
                 <button
@@ -134,22 +135,22 @@ export function ThroughputDiagnosticsView() {
                   }`}
                 >
                   <ArrowUpCircle className="w-4 h-4" />
-                  Upload
+                  Yükleme (Upload)
                 </button>
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-mono text-radar-subtle block">Payload Size</label>
+              <label className="text-xs font-mono text-radar-subtle block">Veri Yükü Boyutu</label>
               <select
                 value={sizeMb}
                 onChange={(e) => setSizeMb(Number(e.target.value))}
                 disabled={isRunning}
                 className="w-full bg-radar-bg border border-radar-border rounded-lg px-3 py-2.5 text-sm font-mono text-slate-100 focus:outline-none focus:ring-1 focus:ring-radar-teal"
               >
-                <option value={1}>1.0 MB (Fast check)</option>
-                <option value={2}>2.0 MB (Standard)</option>
-                <option value={5}>5.0 MB (Thorough)</option>
+                <option value={1}>1.0 MB (Hızlı Kontrol)</option>
+                <option value={2}>2.0 MB (Standart)</option>
+                <option value={5}>5.0 MB (Kapsamlı)</option>
               </select>
             </div>
           </div>
@@ -160,7 +161,7 @@ export function ThroughputDiagnosticsView() {
                 onClick={handleStartTest}
                 leftIcon={<RefreshCw className="w-4 h-4" />}
               >
-                Run {direction.toUpperCase()} Test
+                {direction === "download" ? "İndirme" : "Yükleme"} Testini Başlat
               </Button>
             ) : (
               <Button
@@ -168,7 +169,7 @@ export function ThroughputDiagnosticsView() {
                 variant="danger"
                 leftIcon={<StopCircle className="w-4 h-4" />}
               >
-                Cancel Measurement
+                Ölçümü İptal Et
               </Button>
             )}
           </div>
@@ -181,10 +182,10 @@ export function ThroughputDiagnosticsView() {
           <CardHeader>
             <CardTitle>
               <Gauge className="w-4 h-4 text-radar-teal animate-spin" />
-              Transferring Stream ({direction.toUpperCase()})
+              Veri Akışı Aktarılıyor ({direction === "download" ? "İNDİRME" : "YÜKLEME"})
             </CardTitle>
             <Badge variant="teal" pulse={true}>
-              LIVE STREAM
+              CANLI AKIŞ
             </Badge>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -194,7 +195,7 @@ export function ThroughputDiagnosticsView() {
               </span>
               <span className="text-sm font-mono text-radar-teal ml-1">Mbps</span>
               <p className="text-xs text-radar-muted font-mono mt-1">
-                Transferred {formatBytes(progress.transferredBytes)} of {formatBytes(progress.totalExpectedBytes)}
+                Aktarılan: {formatBytes(progress.transferredBytes)} / {formatBytes(progress.totalExpectedBytes)}
               </p>
             </div>
 
@@ -220,44 +221,44 @@ export function ThroughputDiagnosticsView() {
           <CardHeader>
             <CardTitle>
               <Gauge className="w-4 h-4 text-radar-teal" />
-              Throughput Summary ({lastResult.direction.toUpperCase()})
+              Veri Akış Hızı Özeti ({lastResult.direction === "download" ? "İNDİRME" : "YÜKLEME"})
             </CardTitle>
             <Badge variant={lastResult.status === "success" ? "emerald" : "rose"}>
-              {lastResult.status.toUpperCase()}
+              {lastResult.status === "success" ? "BAŞARILI" : "HATA"}
             </Badge>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
-                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Effective Speed</span>
+                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Efektif Hız</span>
                 <span className="text-xl font-bold font-mono text-radar-teal mt-0.5 block">
                   {formatSpeed(lastResult.mbps)}
                 </span>
-                <span className="text-[10px] text-radar-muted">Megabits / second</span>
+                <span className="text-[10px] text-radar-muted">Megabit / saniye</span>
               </div>
 
               <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
-                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Transferred</span>
+                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Aktarılan Veri</span>
                 <span className="text-lg font-bold font-mono text-white mt-0.5 block">
                   {formatBytes(lastResult.bytesTransferred)}
                 </span>
-                <span className="text-[10px] text-radar-muted">Binary payload</span>
+                <span className="text-[10px] text-radar-muted">İkili veri yükü</span>
               </div>
 
               <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
-                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Elapsed Time</span>
+                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Geçen Süre</span>
                 <span className="text-lg font-bold font-mono text-white mt-0.5 block">
                   {formatDuration(lastResult.durationMs)}
                 </span>
-                <span className="text-[10px] text-radar-muted">Client stream duration</span>
+                <span className="text-[10px] text-radar-muted">İstemci akış süresi</span>
               </div>
 
               <div className="bg-radar-bg p-3 rounded-lg border border-radar-border">
-                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Endpoint</span>
+                <span className="text-[11px] font-mono text-radar-subtle uppercase block">Uç Nokta</span>
                 <span className="text-xs font-bold font-mono text-white mt-1 block truncate">
                   {lastResult.endpoint}
                 </span>
-                <span className="text-[10px] text-radar-muted">NetRadar API route</span>
+                <span className="text-[10px] text-radar-muted">NetRadar API rotası</span>
               </div>
             </div>
 

@@ -1,7 +1,7 @@
 {
-  "name": "NetRadar — Network Diagnostics",
+  "name": "NetRadar — Ağ Tanılama & Analiz",
   "short_name": "NetRadar",
-  "description": "Professional Network Diagnostics PWA for IT Administrators & Engineers",
+  "description": "BT Yöneticileri ve Ağ Mühendisleri için Profesyonel Ağ Tanılama PWA'sı",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
